@@ -189,6 +189,10 @@ const ConceptForm = () => {
     projectGoalObjectives: 0,
     projectOutputsActivities: 0
   })
+  // Eligibility state
+  const [isEligible, setIsEligible] = useState(false);
+  const [eligibilityChecked, setEligibilityChecked] = useState(false);
+  const [eligibilityError, setEligibilityError] = useState('');
 
   const formik = useFormik({
     initialValues: {
@@ -372,6 +376,7 @@ const ConceptForm = () => {
   const organizationTypes = [
     'NGO',
     'Private',
+    'Government',
     'Community-based organization/association',
     'Academia',
     'International Organization',
@@ -386,6 +391,45 @@ const ConceptForm = () => {
     'Stann Creek',
     'Toledo'
   ]
+
+  // Eligibility logic: require org name, org type, and contact email to be filled and valid
+  const checkEligibility = () => {
+    setEligibilityChecked(true);
+    setEligibilityError('');
+    const { organizationName, organizationType, contactEmail, dateOfIncorporation } = formik.values;
+    let errorMsg = '';
+    if (!organizationName || !organizationType || !contactEmail || !dateOfIncorporation) {
+      errorMsg = 'Please fill Organization Name, Organization Type, Contact Email, and Date of Incorporation to check eligibility.';
+    } else {
+      // Simple email validation
+      const emailValid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(contactEmail);
+      if (!emailValid) {
+        errorMsg = 'Please enter a valid Contact Email.';
+      } else if (organizationType === 'Government') {
+        errorMsg = 'Government organizations are not eligible.';
+      } else {
+        // Check if date of incorporation is at least 1 year before today
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+        const incDate = new Date(dateOfIncorporation);
+        if (isNaN(incDate.getTime()) || incDate > oneYearAgo) {
+          errorMsg = 'Date of Incorporation must be at least 1 year before today.';
+        }
+      }
+    }
+    if (errorMsg) {
+      setIsEligible(false);
+      setEligibilityError(errorMsg);
+      toast.error('Eligibility check failed. ' + errorMsg);
+      return;
+    }
+    setIsEligible(true);
+    setEligibilityError('');
+    toast.success('Eligibility criteria passed! You may now fill the form.');
+  };
+
+  // All fields disabled until eligibility is passed
+  const isFormDisabled = !isEligible;
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white">
@@ -709,588 +753,630 @@ const ConceptForm = () => {
             </div>
           </div>
 
-          {/* 3. Project Duration */}
-          <div className="mb-6 bg-white p-4 rounded-lg border">
-            <h4 className="font-medium text-gray-700 mb-3">3. Project Duration</h4>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Proposed Start Date <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="date"
-                  {...formik.getFieldProps('proposedStartDate')}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                {formik.touched.proposedStartDate && formik.errors.proposedStartDate && (
-                  <p className="text-red-500 text-sm mt-1">{formik.errors.proposedStartDate}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Duration (months) <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="number"
-                  {...formik.getFieldProps('durationMonths')}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  min="1"
-                  max={awardRequirements.maxDuration || undefined}
-                  placeholder={`Enter duration (max: ${awardRequirements.maxDuration || 'unlimited'} months)`}
-                />
-                {formik.touched.durationMonths && formik.errors.durationMonths && (
-                  <p className="text-red-500 text-sm mt-1">{formik.errors.durationMonths}</p>
-                )}
-                {formik.values.awardCategory && awardRequirements.durationText && (
-                  <p className="text-xs text-blue-600 mt-1 font-medium">{awardRequirements.durationText}</p>
-                )}
-                {formik.values.awardCategory && awardRequirements.maxDuration && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    Maximum allowed: {awardRequirements.maxDuration} months
-                  </p>
-                )}
-              </div>
-            </div>
+          {/* 2.1 Check Eligibility Criteria */}
+          <div className="mb-6 bg-yellow-50 p-4 rounded-lg border border-yellow-300">
+            <h4 className="font-medium text-yellow-800 mb-3">2.1 Check Eligibility Criteria</h4>
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                checked={isEligible}
+                onChange={checkEligibility}
+                disabled={isEligible}
+                aria-checked={isEligible}
+                aria-label="Check eligibility criteria"
+                className="mr-2"
+              />
+              <span className="text-sm text-gray-700">I confirm the above information is correct. Check eligibility to proceed.</span>
+            </label>
+            {eligibilityChecked && eligibilityError && (
+              <p className="text-red-600 text-sm mt-2 font-semibold" role="alert">{eligibilityError}</p>
+            )}
+            {isEligible && (
+              <p className="text-green-700 text-sm mt-2">Eligibility passed! You may now fill the rest of the form.</p>
+            )}
           </div>
 
-          {/* 4. Link to Belize Fund Thematic Area (TA) */}
-          <div className="mb-6 bg-white p-4 rounded-lg border">
-            <h4 className="font-medium text-gray-700 mb-3">4. Link to Belize Fund Thematic Area (TA)</h4>
-            <p className="text-sm text-gray-600 mb-3">Please select the most relevant Thematic Area (Check only one)</p>
-            <div className="space-y-4">
-              {thematicAreas.map(area => (
-                <div key={area.id} className={`p-4 rounded-lg ${area.active ? 'bg-blue-50' : 'bg-gray-50'}`}>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="thematicArea"
-                      value={area.name}
-                      checked={formik.values.thematicArea === area.name}
-                      onChange={formik.handleChange}
-                      disabled={!area.active}
-                      className="mr-2 text-blue-600"
-                    />
-                    <span className={`text-sm ${area.active ? 'text-gray-900' : 'text-gray-500'}`}>
-                      {area.name}
-                      {!area.active && <span className="ml-2 text-xs">(Currently inactive)</span>}
-                    </span>
+          {/* All fields below are disabled until eligibility is passed */}
+          <fieldset disabled={isFormDisabled} aria-disabled={isFormDisabled} style={{ opacity: isFormDisabled ? 0.6 : 1 }}>
+            {/* 3. Project Duration */}
+            <div className="mb-6 bg-white p-4 rounded-lg border">
+              <h4 className="font-medium text-gray-700 mb-3">3. Project Duration</h4>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Proposed Start Date <span className="text-red-500">*</span>
                   </label>
-                  
-                  {formik.values.thematicArea === area.name && (
-                    <div className="mt-3 ml-6">
-                      <p className="text-sm font-medium text-gray-700 mb-2">Select Award Category:</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        {area.awards.map(award => (
-                          <label key={award} className="flex items-center">
-                            <input
-                              type="radio"
-                              name="awardCategory"
-                              value={award}
-                              checked={formik.values.awardCategory === award}
-                              onChange={formik.handleChange}
-                              className="mr-2 text-blue-600"
-                            />
-                            <span className="text-sm">{award}</span>
-                          </label>
-                        ))}
+                  <input
+                    type="date"
+                    {...formik.getFieldProps('proposedStartDate')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  {formik.touched.proposedStartDate && formik.errors.proposedStartDate && (
+                    <p className="text-red-500 text-sm mt-1">{formik.errors.proposedStartDate}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Duration (months) <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    {...formik.getFieldProps('durationMonths')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    min="1"
+                    max={awardRequirements.maxDuration || undefined}
+                    placeholder={`Enter duration (max: ${awardRequirements.maxDuration || 'unlimited'} months)`}
+                  />
+                  {formik.touched.durationMonths && formik.errors.durationMonths && (
+                    <p className="text-red-500 text-sm mt-1">{formik.errors.durationMonths}</p>
+                  )}
+                  {formik.values.awardCategory && awardRequirements.durationText && (
+                    <p className="text-xs text-blue-600 mt-1 font-medium">{awardRequirements.durationText}</p>
+                  )}
+                  {formik.values.awardCategory && awardRequirements.maxDuration && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Maximum allowed: {awardRequirements.maxDuration} months
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* 4. Link to Belize Fund Thematic Area (TA) */}
+            <div className="mb-6 bg-white p-4 rounded-lg border">
+              <h4 className="font-medium text-gray-700 mb-3">4. Link to Belize Fund Thematic Area (TA)</h4>
+              <p className="text-sm text-gray-600 mb-3">Please select the most relevant Thematic Area (Check only one)</p>
+              <div className="space-y-4">
+                {thematicAreas.map(area => (
+                  <div key={area.id} className={`p-4 rounded-lg ${area.active ? 'bg-blue-50' : 'bg-gray-50'}`}>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="thematicArea"
+                        value={area.name}
+                        checked={formik.values.thematicArea === area.name}
+                        onChange={formik.handleChange}
+                        disabled={!area.active}
+                        className="mr-2 text-blue-600"
+                      />
+                      <span className={`text-sm ${area.active ? 'text-gray-900' : 'text-gray-500'}`}>
+                        {area.name}
+                        {!area.active && <span className="ml-2 text-xs">(Currently inactive)</span>}
+                      </span>
+                    </label>
+                    
+                    {formik.values.thematicArea === area.name && (
+                      <div className="mt-3 ml-6">
+                        <p className="text-sm font-medium text-gray-700 mb-2">Select Award Category:</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          {area.awards.map(award => (
+                            <label key={award} className="flex items-center">
+                              <input
+                                type="radio"
+                                name="awardCategory"
+                                value={award}
+                                checked={formik.values.awardCategory === award}
+                                onChange={formik.handleChange}
+                                className="mr-2 text-blue-600"
+                              />
+                              <span className="text-sm">{award}</span>
+                            </label>
+                          ))}
+                        </div>
                       </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Award Category Requirements Display */}
+            {formik.values.awardCategory && (
+              <div className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+                <div className="flex items-center mb-3">
+                  <Award className="h-5 w-5 text-blue-600 mr-2" />
+                  <h4 className="font-semibold text-gray-800">Award Category Requirements</h4>
+                </div>
+                <div className="bg-white p-3 rounded-lg border">
+                  <div className="flex items-center mb-2">
+                    <span className="text-sm font-bold text-blue-700">{formik.values.awardCategory}</span>
+                  </div>
+                  <div className="grid md:grid-cols-3 gap-4 text-sm">
+                    <div className="space-y-1">
+                      <p className="font-medium text-gray-700">💰 Funding Limits</p>
+                      <p className="text-gray-600">{awardRequirements.fundingText}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="font-medium text-gray-700">⏱️ Project Duration</p>
+                      <p className="text-gray-600">{awardRequirements.durationText}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="font-medium text-gray-700">💳 Co-financing</p>
+                      <p className="text-gray-600">{awardRequirements.coFinText}</p>
+                    </div>
+                  </div>
+                  {awardRequirements.coFinRequired && (
+                    <div className="mt-3 pt-3 border-t border-gray-200">
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">Current co-financing percentage:</span> {awardRequirements.actualCoFinPct.toFixed(1)}%
+                      </p>
                     </div>
                   )}
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Award Category Requirements Display */}
-          {formik.values.awardCategory && (
-            <div className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
-              <div className="flex items-center mb-3">
-                <Award className="h-5 w-5 text-blue-600 mr-2" />
-                <h4 className="font-semibold text-gray-800">Award Category Requirements</h4>
               </div>
-              <div className="bg-white p-3 rounded-lg border">
-                <div className="flex items-center mb-2">
-                  <span className="text-sm font-bold text-blue-700">{formik.values.awardCategory}</span>
-                </div>
-                <div className="grid md:grid-cols-3 gap-4 text-sm">
-                  <div className="space-y-1">
-                    <p className="font-medium text-gray-700">💰 Funding Limits</p>
-                    <p className="text-gray-600">{awardRequirements.fundingText}</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="font-medium text-gray-700">⏱️ Project Duration</p>
-                    <p className="text-gray-600">{awardRequirements.durationText}</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="font-medium text-gray-700">💳 Co-financing</p>
-                    <p className="text-gray-600">{awardRequirements.coFinText}</p>
-                  </div>
-                </div>
-                {awardRequirements.coFinRequired && (
-                  <div className="mt-3 pt-3 border-t border-gray-200">
-                    <p className="text-sm text-gray-600">
-                      <span className="font-medium">Current co-financing percentage:</span> {awardRequirements.actualCoFinPct.toFixed(1)}%
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+            )}
+          </fieldset>
         </div>
 
         {/* Section B: Project Summary */}
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-lg border border-green-200">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center">
-              <FileText className="h-6 w-6 text-green-600 mr-2" />
-              <h3 className="text-xl font-semibold text-gray-800">
-                B. PROJECT SUMMARY
-              </h3>
-            </div>
-            <div className="text-sm text-gray-500">
-              ({wordCounts.projectSummary}/250 words)
-            </div>
-          </div>
-          
-          <div className="bg-white p-4 rounded-lg border">
-            <div className="mb-3">
-              <h4 className="font-medium text-gray-700 mb-2">Project Overview (250 words)</h4>
-              <div className="text-sm text-gray-600 mb-4">
-                <p>In this section, please provide an overview of the proposed project which should include the following information:</p>
-                <ul className="list-disc list-inside mt-2 space-y-1">
-                  <li>A summary of the key points and actions of the initiative.</li>
-                  <li>The project context and project location.</li>
-                  <li>The issue/problem statement to be addressed (the problem/threat) and proposed approach/solution.</li>
-                  <li>How will this proposed project directly contribute to the selected Belize Fund Thematic Area (TA)</li>
-                </ul>
-                <p className="mt-3 text-red-600 font-medium">
-                  The Belize Fund will not fund projects that do not respond to or are not directly aligned with a TA.
-                </p>
+        <fieldset disabled={isFormDisabled} aria-disabled={isFormDisabled} style={{ opacity: isFormDisabled ? 0.6 : 1 }}>
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-lg border border-green-200">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <FileText className="h-6 w-6 text-green-600 mr-2" />
+                <h3 className="text-xl font-semibold text-gray-800">
+                  B. PROJECT SUMMARY
+                </h3>
+              </div>
+              <div className="text-sm text-gray-500">
+                ({wordCounts.projectSummary}/250 words)
               </div>
             </div>
             
-            <textarea
-              {...formik.getFieldProps('projectSummary')}
-              onChange={(e) => {
-                formik.handleChange(e)
-                updateWordCount('projectSummary', e.target.value)
-              }}
-              rows="8"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-              placeholder="Provide your project overview here..."
-            />
-            {formik.touched.projectSummary && formik.errors.projectSummary && (
-              <p className="text-red-500 text-sm mt-1">{formik.errors.projectSummary}</p>
-            )}
+            <div className="bg-white p-4 rounded-lg border">
+              <div className="mb-3">
+                <h4 className="font-medium text-gray-700 mb-2">Project Overview (250 words)</h4>
+                <div className="text-sm text-gray-600 mb-4">
+                  <p>In this section, please provide an overview of the proposed project which should include the following information:</p>
+                  <ul className="list-disc list-inside mt-2 space-y-1">
+                    <li>A summary of the key points and actions of the initiative.</li>
+                    <li>The project context and project location.</li>
+                    <li>The issue/problem statement to be addressed (the problem/threat) and proposed approach/solution.</li>
+                    <li>How will this proposed project directly contribute to the selected Belize Fund Thematic Area (TA)</li>
+                  </ul>
+                  <p className="mt-3 text-red-600 font-medium">
+                    The Belize Fund will not fund projects that do not respond to or are not directly aligned with a TA.
+                  </p>
+                </div>
+              </div>
+              
+              <textarea
+                {...formik.getFieldProps('projectSummary')}
+                onChange={(e) => {
+                  formik.handleChange(e)
+                  updateWordCount('projectSummary', e.target.value)
+                }}
+                rows="8"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                placeholder="Provide your project overview here..."
+              />
+              {formik.touched.projectSummary && formik.errors.projectSummary && (
+                <p className="text-red-500 text-sm mt-1">{formik.errors.projectSummary}</p>
+              )}
+            </div>
           </div>
-        </div>
+        </fieldset>
 
         {/* Section C: Project Goal and Objectives */}
-        <div className="bg-gradient-to-r from-purple-50 to-violet-50 p-6 rounded-lg border border-purple-200">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center">
-              <Target className="h-6 w-6 text-purple-600 mr-2" />
-              <h3 className="text-xl font-semibold text-gray-800">
-                C. PROJECT GOAL AND OBJECTIVES
-              </h3>
-            </div>
-            <div className="text-sm text-gray-500">
-              ({wordCounts.projectGoalObjectives}/200 words)
-            </div>
-          </div>
-          
-          <div className="bg-white p-4 rounded-lg border">
-            <div className="mb-3">
-              <h4 className="font-medium text-gray-700 mb-2">Goals and Objectives (200 words)</h4>
-              <div className="text-sm text-gray-600 mb-4">
-                <p>In this section, please list and describe the following:</p>
-                <ul className="list-disc list-inside mt-2 space-y-1">
-                  <li>What is the goal of the proposed project?</li>
-                  <li>What are the specific objectives of the proposed project?</li>
-                  <li>The potential impact of the project – what might be the longer-term impact of your project?</li>
-                </ul>
+        <fieldset disabled={isFormDisabled} aria-disabled={isFormDisabled} style={{ opacity: isFormDisabled ? 0.6 : 1 }}>
+          <div className="bg-gradient-to-r from-purple-50 to-violet-50 p-6 rounded-lg border border-purple-200">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <Target className="h-6 w-6 text-purple-600 mr-2" />
+                <h3 className="text-xl font-semibold text-gray-800">
+                  C. PROJECT GOAL AND OBJECTIVES
+                </h3>
+              </div>
+              <div className="text-sm text-gray-500">
+                ({wordCounts.projectGoalObjectives}/200 words)
               </div>
             </div>
             
-            <textarea
-              {...formik.getFieldProps('projectGoalObjectives')}
-              onChange={(e) => {
-                formik.handleChange(e)
-                updateWordCount('projectGoalObjectives', e.target.value)
-              }}
-              rows="6"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Describe your project goals and objectives here..."
-            />
-            {formik.touched.projectGoalObjectives && formik.errors.projectGoalObjectives && (
-              <p className="text-red-500 text-sm mt-1">{formik.errors.projectGoalObjectives}</p>
-            )}
+            <div className="bg-white p-4 rounded-lg border">
+              <div className="mb-3">
+                <h4 className="font-medium text-gray-700 mb-2">Goals and Objectives (200 words)</h4>
+                <div className="text-sm text-gray-600 mb-4">
+                  <p>In this section, please list and describe the following:</p>
+                  <ul className="list-disc list-inside mt-2 space-y-1">
+                    <li>What is the goal of the proposed project?</li>
+                    <li>What are the specific objectives of the proposed project?</li>
+                    <li>The potential impact of the project – what might be the longer-term impact of your project?</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <textarea
+                {...formik.getFieldProps('projectGoalObjectives')}
+                onChange={(e) => {
+                  formik.handleChange(e)
+                  updateWordCount('projectGoalObjectives', e.target.value)
+                }}
+                rows="6"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="Describe your project goals and objectives here..."
+              />
+              {formik.touched.projectGoalObjectives && formik.errors.projectGoalObjectives && (
+                <p className="text-red-500 text-sm mt-1">{formik.errors.projectGoalObjectives}</p>
+              )}
+            </div>
           </div>
-        </div>
+        </fieldset>
 
         {/* Section D: Project Outputs and Activities */}
-        <div className="bg-gradient-to-r from-orange-50 to-amber-50 p-6 rounded-lg border border-orange-200">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center">
-              <Activity className="h-6 w-6 text-orange-600 mr-2" />
-              <h3 className="text-xl font-semibold text-gray-800">
-                D. PROJECT OUTPUTS AND ACTIVITIES
-              </h3>
-            </div>
-            <div className="text-sm text-gray-500">
-              ({wordCounts.projectOutputsActivities}/500 words)
-            </div>
-          </div>
-          
-          <div className="bg-white p-4 rounded-lg border">
-            <div className="mb-3">
-              <h4 className="font-medium text-gray-700 mb-2">Outputs and Activities (500 words)</h4>
-              <div className="text-sm text-gray-600 mb-4">
-                <p>This section should contain a clear and specific statement of what the proposed project will accomplish. Demonstrate how these activities will lead to the achievement of the project goal. This section should include:</p>
-                <ul className="list-disc list-inside mt-2 space-y-1">
-                  <li>The specific outputs that the project aims to produce. What outputs are the project intend to design and/or deliver?</li>
-                  <li>The specific activities that the project will conduct. How will the activities provide the desired outputs?</li>
-                </ul>
+        <fieldset disabled={isFormDisabled} aria-disabled={isFormDisabled} style={{ opacity: isFormDisabled ? 0.6 : 1 }}>
+          <div className="bg-gradient-to-r from-orange-50 to-amber-50 p-6 rounded-lg border border-orange-200">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <Activity className="h-6 w-6 text-orange-600 mr-2" />
+                <h3 className="text-xl font-semibold text-gray-800">
+                  D. PROJECT OUTPUTS AND ACTIVITIES
+                </h3>
+              </div>
+              <div className="text-sm text-gray-500">
+                ({wordCounts.projectOutputsActivities}/500 words)
               </div>
             </div>
             
-            <textarea
-              {...formik.getFieldProps('projectOutputsActivities')}
-              onChange={(e) => {
-                formik.handleChange(e)
-                updateWordCount('projectOutputsActivities', e.target.value)
-              }}
-              rows="10"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-              placeholder="Describe your project outputs and activities here..."
-            />
-            {formik.touched.projectOutputsActivities && formik.errors.projectOutputsActivities && (
-              <p className="text-red-500 text-sm mt-1">{formik.errors.projectOutputsActivities}</p>
-            )}
+            <div className="bg-white p-4 rounded-lg border">
+              <div className="mb-3">
+                <h4 className="font-medium text-gray-700 mb-2">Outputs and Activities (500 words)</h4>
+                <div className="text-sm text-gray-600 mb-4">
+                  <p>This section should contain a clear and specific statement of what the proposed project will accomplish. Demonstrate how these activities will lead to the achievement of the project goal. This section should include:</p>
+                  <ul className="list-disc list-inside mt-2 space-y-1">
+                    <li>The specific outputs that the project aims to produce. What outputs are the project intend to design and/or deliver?</li>
+                    <li>The specific activities that the project will conduct. How will the activities provide the desired outputs?</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <textarea
+                {...formik.getFieldProps('projectOutputsActivities')}
+                onChange={(e) => {
+                  formik.handleChange(e)
+                  updateWordCount('projectOutputsActivities', e.target.value)
+                }}
+                rows="10"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                placeholder="Describe your project outputs and activities here..."
+              />
+              {formik.touched.projectOutputsActivities && formik.errors.projectOutputsActivities && (
+                <p className="text-red-500 text-sm mt-1">{formik.errors.projectOutputsActivities}</p>
+              )}
+            </div>
           </div>
-        </div>
+        </fieldset>
 
         {/* Section E: Project Budget Summary */}
-        <div className="bg-gradient-to-r from-emerald-50 to-teal-50 p-6 rounded-lg border border-emerald-200">
-          <div className="flex items-center mb-4">
-            <DollarSign className="h-6 w-6 text-emerald-600 mr-2" />
-            <h3 className="text-xl font-semibold text-gray-800">
-              E. PROJECT BUDGET SUMMARY
-            </h3>
-          </div>
+        <fieldset disabled={isFormDisabled} aria-disabled={isFormDisabled} style={{ opacity: isFormDisabled ? 0.6 : 1 }}>
+          <div className="bg-gradient-to-r from-emerald-50 to-teal-50 p-6 rounded-lg border border-emerald-200">
+            <div className="flex items-center mb-4">
+              <DollarSign className="h-6 w-6 text-emerald-600 mr-2" />
+              <h3 className="text-xl font-semibold text-gray-800">
+                E. PROJECT BUDGET SUMMARY
+              </h3>
+            </div>
 
-          <div className="bg-white p-4 rounded-lg border space-y-6">
-            {/* Co-financing Input */}
-            <div>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="totalBudgetRequested" className="block text-sm font-medium text-gray-700 mb-1">
-                    Budget amount requested from Belize Fund (BZ$) <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    id="totalBudgetRequested"
-                    {...formik.getFieldProps('totalBudgetRequested')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter amount"
-                    min="0"
-                  />
-                  {formik.values.awardCategory && awardRequirements.fundingText && (
-                    <p className="text-xs text-gray-500 mt-1">{awardRequirements.fundingText}</p>
-                  )}
-                  {formik.touched.totalBudgetRequested && formik.errors.totalBudgetRequested && (
-                    <p className="text-xs text-red-600 font-semibold">{formik.errors.totalBudgetRequested}</p>
-                  )}
+            <div className="bg-white p-4 rounded-lg border space-y-6">
+              {/* Co-financing Input */}
+              <div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="totalBudgetRequested" className="block text-sm font-medium text-gray-700 mb-1">
+                      Budget amount requested from Belize Fund (BZ$) <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      id="totalBudgetRequested"
+                      {...formik.getFieldProps('totalBudgetRequested')}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Enter amount"
+                      min="0"
+                    />
+                    {formik.values.awardCategory && awardRequirements.fundingText && (
+                      <p className="text-xs text-gray-500 mt-1">{awardRequirements.fundingText}</p>
+                    )}
+                    {formik.touched.totalBudgetRequested && formik.errors.totalBudgetRequested && (
+                      <p className="text-xs text-red-600 font-semibold">{formik.errors.totalBudgetRequested}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label htmlFor="totalCoFinancing" className="block text-sm font-medium text-gray-700 mb-1">
+                      Total Co-financing (BZ$) 
+                      {awardRequirements.coFinRequired && <span className="text-red-500">*</span>}
+                    </label>
+                    <input
+                      type="number"
+                      id="totalCoFinancing"
+                      {...formik.getFieldProps('totalCoFinancing')}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Enter amount"
+                      min="0"
+                    />
+                    {formik.values.awardCategory && awardRequirements.coFinText && (
+                      <p className="text-xs text-gray-500 mt-1">{awardRequirements.coFinText}</p>
+                    )}
+                    {formik.values.awardCategory && awardRequirements.coFinRequired && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        Current Co-financing: {awardRequirements.actualCoFinPct.toFixed(1)}%
+                      </p>
+                    )}
+                    {formik.touched.totalCoFinancing && formik.errors.totalCoFinancing && (
+                      <p className="text-xs text-red-600 font-semibold">{formik.errors.totalCoFinancing}</p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <label htmlFor="totalCoFinancing" className="block text-sm font-medium text-gray-700 mb-1">
-                    Total Co-financing (BZ$) 
-                    {awardRequirements.coFinRequired && <span className="text-red-500">*</span>}
-                  </label>
-                  <input
-                    type="number"
-                    id="totalCoFinancing"
-                    {...formik.getFieldProps('totalCoFinancing')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter amount"
-                    min="0"
-                  />
-                  {formik.values.awardCategory && awardRequirements.coFinText && (
-                    <p className="text-xs text-gray-500 mt-1">{awardRequirements.coFinText}</p>
-                  )}
-                  {formik.values.awardCategory && awardRequirements.coFinRequired && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      Current Co-financing: {awardRequirements.actualCoFinPct.toFixed(1)}%
+              </div>
+
+              {/* Budget Breakdown */}
+              <div>
+                <h4 className="font-medium text-gray-700 mb-3">Budget Breakdown</h4>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full border border-gray-300">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="border border-gray-300 px-4 py-2 text-left">Category</th>
+                        <th className="border border-gray-300 px-4 py-2 text-left">Amount (BZD)</th>
+                        <th className="border border-gray-300 px-4 py-2 text-left">Percentage (%)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { key: 'salaryBudget', label: 'Salary' },
+                        { key: 'travelBudget', label: 'Travel/accommodation' },
+                        { key: 'equipmentBudget', label: 'Equipment/supplies' },
+                        { key: 'contractedServicesBudget', label: 'Contracted Services' },
+                        { key: 'operationalBudget', label: 'Operational Costs' },
+                        { key: 'educationBudget', label: 'Education/outreach' },
+                        { key: 'trainingBudget', label: 'Training' },
+                        { key: 'administrativeBudget', label: 'Administrative' },
+                      ].map(({ key, label }) => (
+                        <tr key={key}>
+                          <td className="border border-gray-300 px-4 py-2 font-medium">{label}</td>
+                          <td className="border border-gray-300 px-4 py-2">
+                            <input
+                              type="number"
+                              {...formik.getFieldProps(key)}
+                              className="w-full px-2 py-1 border border-gray-200 rounded"
+                              placeholder="$0"
+                              min="0"
+                            />
+                          </td>
+                          <td className="border border-gray-300 px-4 py-2 text-center">
+                            {totalBudgetRequested > 0 ? 
+                              ((parseFloat(formik.values[key]) || 0) / totalBudgetRequested * 100).toFixed(1) 
+                              : 0}%
+                          </td>
+                        </tr>
+                      ))}
+                      <tr className="bg-blue-50 font-semibold">
+                        <td className="border border-gray-300 px-4 py-2">TOTAL Funds from Belize Fund</td>
+                        <td className="border border-gray-300 px-4 py-2">${totalBudgetRequested.toFixed(2)}</td>
+                        <td className="border border-gray-300 px-4 py-2 text-center">{requestedPercentage}%</td>
+                      </tr>
+                      <tr className="bg-green-50 font-semibold">
+                        <td className="border border-gray-300 px-4 py-2">Total Co-financing</td>
+                        <td className="border border-gray-300 px-4 py-2">${(parseFloat(formik.values.totalCoFinancing) || 0).toFixed(2)}</td>
+                        <td className="border border-gray-300 px-4 py-2 text-center">{coFinancingPercentage}%</td>
+                      </tr>
+                      <tr className="bg-gray-100 font-bold">
+                        <td className="border border-gray-300 px-4 py-2">Total Project Estimated Cost</td>
+                        <td className="border border-gray-300 px-4 py-2">${totalProjectCost.toFixed(2)}</td>
+                        <td className="border border-gray-300 px-4 py-2 text-center">100%</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Funding limits and co-financing requirements feedback */}
+              {formik.values.awardCategory && (
+                <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                  <h5 className="font-medium text-gray-700 mb-2">Award Category Requirements Summary</h5>
+                  <div className="space-y-1 text-sm">
+                    <p className="text-blue-700">
+                      <span className="font-medium">Funding:</span> {awardRequirements.fundingText}
                     </p>
+                    <p className="text-blue-700">
+                      <span className="font-medium">Duration:</span> {awardRequirements.durationText}
+                    </p>
+                    <p className="text-blue-700">
+                      <span className="font-medium">Co-financing:</span> {awardRequirements.coFinText}
+                    </p>
+                    {awardRequirements.coFinRequired && (
+                      <p className="text-gray-700">
+                        <span className="font-medium">Current co-financing:</span> {awardRequirements.actualCoFinPct.toFixed(1)}%
+                      </p>
+                    )}
+                  </div>
+                  {formik.touched.totalBudgetRequested && formik.errors.totalBudgetRequested && (
+                    <p className="text-xs text-red-600 font-semibold mt-2">{formik.errors.totalBudgetRequested}</p>
                   )}
                   {formik.touched.totalCoFinancing && formik.errors.totalCoFinancing && (
-                    <p className="text-xs text-red-600 font-semibold">{formik.errors.totalCoFinancing}</p>
+                    <p className="text-xs text-red-600 font-semibold mt-2">{formik.errors.totalCoFinancing}</p>
                   )}
                 </div>
-              </div>
-            </div>
+              )}
 
-            {/* Budget Breakdown */}
-            <div>
-              <h4 className="font-medium text-gray-700 mb-3">Budget Breakdown</h4>
-              <div className="overflow-x-auto">
-                <table className="min-w-full border border-gray-300">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="border border-gray-300 px-4 py-2 text-left">Category</th>
-                      <th className="border border-gray-300 px-4 py-2 text-left">Amount (BZD)</th>
-                      <th className="border border-gray-300 px-4 py-2 text-left">Percentage (%)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      { key: 'salaryBudget', label: 'Salary' },
-                      { key: 'travelBudget', label: 'Travel/accommodation' },
-                      { key: 'equipmentBudget', label: 'Equipment/supplies' },
-                      { key: 'contractedServicesBudget', label: 'Contracted Services' },
-                      { key: 'operationalBudget', label: 'Operational Costs' },
-                      { key: 'educationBudget', label: 'Education/outreach' },
-                      { key: 'trainingBudget', label: 'Training' },
-                      { key: 'administrativeBudget', label: 'Administrative' },
-                    ].map(({ key, label }) => (
-                      <tr key={key}>
-                        <td className="border border-gray-300 px-4 py-2 font-medium">{label}</td>
-                        <td className="border border-gray-300 px-4 py-2">
-                          <input
-                            type="number"
-                            {...formik.getFieldProps(key)}
-                            className="w-full px-2 py-1 border border-gray-200 rounded"
-                            placeholder="$0"
-                            min="0"
-                          />
-                        </td>
-                        <td className="border border-gray-300 px-4 py-2 text-center">
-                          {totalBudgetRequested > 0 ? 
-                            ((parseFloat(formik.values[key]) || 0) / totalBudgetRequested * 100).toFixed(1) 
-                            : 0}%
-                        </td>
-                      </tr>
-                    ))}
-                    <tr className="bg-blue-50 font-semibold">
-                      <td className="border border-gray-300 px-4 py-2">TOTAL Funds from Belize Fund</td>
-                      <td className="border border-gray-300 px-4 py-2">${totalBudgetRequested.toFixed(2)}</td>
-                      <td className="border border-gray-300 px-4 py-2 text-center">{requestedPercentage}%</td>
-                    </tr>
-                    <tr className="bg-green-50 font-semibold">
-                      <td className="border border-gray-300 px-4 py-2">Total Co-financing</td>
-                      <td className="border border-gray-300 px-4 py-2">${(parseFloat(formik.values.totalCoFinancing) || 0).toFixed(2)}</td>
-                      <td className="border border-gray-300 px-4 py-2 text-center">{coFinancingPercentage}%</td>
-                    </tr>
-                    <tr className="bg-gray-100 font-bold">
-                      <td className="border border-gray-300 px-4 py-2">Total Project Estimated Cost</td>
-                      <td className="border border-gray-300 px-4 py-2">${totalProjectCost.toFixed(2)}</td>
-                      <td className="border border-gray-300 px-4 py-2 text-center">100%</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Funding limits and co-financing requirements feedback */}
-            {formik.values.awardCategory && (
-              <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                <h5 className="font-medium text-gray-700 mb-2">Award Category Requirements Summary</h5>
-                <div className="space-y-1 text-sm">
-                  <p className="text-blue-700">
-                    <span className="font-medium">Funding:</span> {awardRequirements.fundingText}
-                  </p>
-                  <p className="text-blue-700">
-                    <span className="font-medium">Duration:</span> {awardRequirements.durationText}
-                  </p>
-                  <p className="text-blue-700">
-                    <span className="font-medium">Co-financing:</span> {awardRequirements.coFinText}
-                  </p>
-                  {awardRequirements.coFinRequired && (
-                    <p className="text-gray-700">
-                      <span className="font-medium">Current co-financing:</span> {awardRequirements.actualCoFinPct.toFixed(1)}%
-                    </p>
-                  )}
+              {/* Budget Guidelines */}
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h5 className="font-medium text-gray-700 mb-2">Budget Guidelines</h5>
+                <div className="text-sm text-gray-600 space-y-1">
+                  <p>• Salaries: 100% for exclusive positions, 60% for direct involvement, 20% for admin staff</p>
+                  <p>• Administrative costs: Up to 10% of overall budget (15% if using intermediary)</p>
+                  <p>• Co-financing requirements: Community grants (none), Medium (10-25%), Large (25-50%)</p>
+                  <p>• Private sector: 1:1 co-financing required</p>
                 </div>
-                {formik.touched.totalBudgetRequested && formik.errors.totalBudgetRequested && (
-                  <p className="text-xs text-red-600 font-semibold mt-2">{formik.errors.totalBudgetRequested}</p>
-                )}
-                {formik.touched.totalCoFinancing && formik.errors.totalCoFinancing && (
-                  <p className="text-xs text-red-600 font-semibold mt-2">{formik.errors.totalCoFinancing}</p>
-                )}
-              </div>
-            )}
-
-            {/* Budget Guidelines */}
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h5 className="font-medium text-gray-700 mb-2">Budget Guidelines</h5>
-              <div className="text-sm text-gray-600 space-y-1">
-                <p>• Salaries: 100% for exclusive positions, 60% for direct involvement, 20% for admin staff</p>
-                <p>• Administrative costs: Up to 10% of overall budget (15% if using intermediary)</p>
-                <p>• Co-financing requirements: Community grants (none), Medium (10-25%), Large (25-50%)</p>
-                <p>• Private sector: 1:1 co-financing required</p>
               </div>
             </div>
           </div>
-        </div>
+        </fieldset>
 
         {/* Declaration Section */}
-        <div className="bg-gradient-to-r from-gray-50 to-slate-50 p-6 rounded-lg border border-gray-200">
-          <div className="flex items-center mb-4">
-            <FileCheck className="h-6 w-6 text-gray-600 mr-2" />
-            <h3 className="text-xl font-semibold text-gray-800">
-              DECLARATION
-            </h3>
-          </div>
+        <fieldset disabled={isFormDisabled} aria-disabled={isFormDisabled} style={{ opacity: isFormDisabled ? 0.6 : 1 }}>
+          <div className="bg-gradient-to-r from-gray-50 to-slate-50 p-6 rounded-lg border border-gray-200">
+            <div className="flex items-center mb-4">
+              <FileCheck className="h-6 w-6 text-gray-600 mr-2" />
+              <h3 className="text-xl font-semibold text-gray-800">
+                DECLARATION
+              </h3>
+            </div>
 
-          <div className="bg-white p-4 rounded-lg border space-y-4">
-            <p className="text-gray-700">
-              I hereby declare that all the above information is correct and accurate to the best of my knowledge.
-            </p>
+            <div className="bg-white p-4 rounded-lg border space-y-4">
+              <p className="text-gray-700">
+                I hereby declare that all the above information is correct and accurate to the best of my knowledge.
+              </p>
 
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Name of Legal Representative <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  {...formik.getFieldProps('legalRepresentativeName')}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
-                  placeholder="Full name and signature"
-                />
-                {formik.touched.legalRepresentativeName && formik.errors.legalRepresentativeName && (
-                  <p className="text-red-500 text-sm mt-1">{formik.errors.legalRepresentativeName}</p>
-                )}
-              </div>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Name of Legal Representative <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    {...formik.getFieldProps('legalRepresentativeName')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    placeholder="Full name and signature"
+                  />
+                  {formik.touched.legalRepresentativeName && formik.errors.legalRepresentativeName && (
+                    <p className="text-red-500 text-sm mt-1">{formik.errors.legalRepresentativeName}</p>
+                  )}
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Date <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="date"
-                  {...formik.getFieldProps('declarationDate')}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
-                />
-                {formik.touched.declarationDate && formik.errors.declarationDate && (
-                  <p className="text-red-500 text-sm mt-1">{formik.errors.declarationDate}</p>
-                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Date <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    {...formik.getFieldProps('declarationDate')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+                  />
+                  {formik.touched.declarationDate && formik.errors.declarationDate && (
+                    <p className="text-red-500 text-sm mt-1">{formik.errors.declarationDate}</p>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </fieldset>
 
         {/* Important Note Section */}
-        <div className="bg-red-50 p-6 rounded-lg border border-red-200 mb-6">
-          <h3 className="text-xl font-semibold text-red-800 mb-4">
-            IMPORTANT NOTE
-          </h3>
-          
-          <div className="text-red-700 space-y-4">
-            <p>
-              A concept paper is not a vague exploration of an idea, but a condensed version of a proposal. 
-              It is expected that you have already thought through your proposed project, the budget included, 
-              and you are presenting a summary.
-            </p>
+        <fieldset disabled={isFormDisabled} aria-disabled={isFormDisabled} style={{ opacity: isFormDisabled ? 0.6 : 1 }}>
+          <div className="bg-red-50 p-6 rounded-lg border border-red-200 mb-6">
+            <h3 className="text-xl font-semibold text-red-800 mb-4">
+              IMPORTANT NOTE
+            </h3>
             
-            <div>
-              <p className="mb-2">
-                The concept paper should not exceed 5 pages (letter size) including the cover page and any charts or diagrams. 
-                Use font: Times New Roman, size: 11. Single or double space is acceptable.
+            <div className="text-red-700 space-y-4">
+              <p>
+                A concept paper is not a vague exploration of an idea, but a condensed version of a proposal. 
+                It is expected that you have already thought through your proposed project, the budget included, 
+                and you are presenting a summary.
               </p>
-            </div>
+              
+              <div>
+                <p className="mb-2">
+                  The concept paper should not exceed 5 pages (letter size) including the cover page and any charts or diagrams. 
+                  Use font: Times New Roman, size: 11. Single or double space is acceptable.
+                </p>
+              </div>
 
-            <div>
-              <p className="font-medium mb-2">
-                Belize Fund does not have budget limits for each category, but all proposals must adhere to the following criteria:
-              </p>
-              <div className="ml-4">
-                <p className="font-medium mb-2">Salaries:</p>
+              <div>
+                <p className="font-medium mb-2">
+                  Belize Fund does not have budget limits for each category, but all proposals must adhere to the following criteria:
+                </p>
+                <div className="ml-4">
+                  <p className="font-medium mb-2">Salaries:</p>
+                  <ul className="list-decimal list-inside space-y-1 ml-4">
+                    <li>100% of staff salaries can be covered by the Belize Fund, provided that the position is fully and exclusively involved in the implementation of the Belize Fund project activities.</li>
+                    <li>Up to 60% of staff salaries can be covered by Belize Fund, provided that they are directly involved in the implementation of Belize Fund project activities.</li>
+                    <li>Up to 20% of administrative staff salaries, such as Executive Director, Finance personnel, drivers, accountants, and HR etc, can be covered by the Belize Fund.</li>
+                    <li>Up to 10% of the overall project budget can be considered under administrative costs such rent, utilities, office supplies, courier etc (overhead). Up to 15% if using an intermediary.</li>
+                    <li>The other budget categories do not have limits, for now, but will only be accepted if they are directly supporting a specific activity.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div>
+                <p className="font-medium mb-2">
+                  Co-financing under the GAP is required based on the size or category of an award:
+                </p>
                 <ul className="list-decimal list-inside space-y-1 ml-4">
-                  <li>100% of staff salaries can be covered by the Belize Fund, provided that the position is fully and exclusively involved in the implementation of the Belize Fund project activities.</li>
-                  <li>Up to 60% of staff salaries can be covered by Belize Fund, provided that they are directly involved in the implementation of Belize Fund project activities.</li>
-                  <li>Up to 20% of administrative staff salaries, such as Executive Director, Finance personnel, drivers, accountants, and HR etc, can be covered by the Belize Fund.</li>
-                  <li>Up to 10% of the overall project budget can be considered under administrative costs such rent, utilities, office supplies, courier etc (overhead). Up to 15% if using an intermediary.</li>
-                  <li>The other budget categories do not have limits, for now, but will only be accepted if they are directly supporting a specific activity.</li>
+                  <li>There is no co-financing requirement for community small grants of up to BZD $75,000.00</li>
+                  <li>Medium grants between BZ$75,000.00 to BZ$150,000.00 require that 10-25% of the total project cost be co-financed by the applicant or collaborating partners.</li>
+                  <li>Large grants above BZ$150,000.00 require that between 25-50% of the total project cost be co-financed by the applicant and/or collaborating partners.</li>
                 </ul>
               </div>
-            </div>
 
-            <div>
-              <p className="font-medium mb-2">
-                Co-financing under the GAP is required based on the size or category of an award:
+              <p>
+                Private sector applicants will be required to provide a 1:1 co-financing. Co-financing can be in the form of cash or in-kind (combined).
               </p>
-              <ul className="list-decimal list-inside space-y-1 ml-4">
-                <li>There is no co-financing requirement for community small grants of up to BZD $75,000.00</li>
-                <li>Medium grants between BZ$75,000.00 to BZ$150,000.00 require that 10-25% of the total project cost be co-financed by the applicant or collaborating partners.</li>
-                <li>Large grants above BZ$150,000.00 require that between 25-50% of the total project cost be co-financed by the applicant and/or collaborating partners.</li>
-              </ul>
             </div>
-
-            <p>
-              Private sector applicants will be required to provide a 1:1 co-financing. Co-financing can be in the form of cash or in-kind (combined).
-            </p>
           </div>
-        </div>
+        </fieldset>
 
         {/* Important Note Acknowledgment */}
-        <div className="bg-red-50 p-4 rounded-lg border border-red-200">
-          <label className="flex items-start">
-            <input
-              type="checkbox"
-              checked={formik.values.hasReadImportantNote}
-              onChange={() => formik.setFieldValue('hasReadImportantNote', !formik.values.hasReadImportantNote)}
-              className="mr-2 mt-1"
-            />
-            <span className="text-sm text-red-700">
-              I have read and understood the Important Note in the Concept Paper template, and I confirm that all required documentation has been uploaded.
-            </span>
-          </label>
-        </div>
+        <fieldset disabled={isFormDisabled} aria-disabled={isFormDisabled} style={{ opacity: isFormDisabled ? 0.6 : 1 }}>
+          <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+            <label className="flex items-start">
+              <input
+                type="checkbox"
+                checked={formik.values.hasReadImportantNote}
+                onChange={() => formik.setFieldValue('hasReadImportantNote', !formik.values.hasReadImportantNote)}
+                className="mr-2 mt-1"
+              />
+              <span className="text-sm text-red-700">
+                I have read and understood the Important Note in the Concept Paper template, and I confirm that all required documentation has been uploaded.
+              </span>
+            </label>
+          </div>
+        </fieldset>
 
         {/* Form Actions */}
-        <div className="flex justify-end items-center pt-6 border-t space-x-4">
-          {/* Debug info - remove in production */}
-        
+        <fieldset disabled={isFormDisabled} aria-disabled={isFormDisabled} style={{ opacity: isFormDisabled ? 0.6 : 1 }}>
+          <div className="flex justify-end items-center pt-6 border-t space-x-4">
+            {/* Debug info - remove in production */}
           
-          <button
-            type="button"
-            onClick={() => {
-              localStorage.setItem('conceptFormData', JSON.stringify(formik.values))
-              toast.success('Form saved as draft!')
-            }}
-            className="flex items-center px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
-            disabled={isSubmitting}
-          >
-            <Save className="h-4 w-4 mr-2" />
-            Save Draft
-          </button>
-          
-          <button
-            type="submit"
-            disabled={!(formik.values.hasRegistrationCert && formik.values.hasArticles && formik.values.hasCertGoodStanding && formik.values.hasReadImportantNote && formik.isValid) || isSubmitting}
-            className="flex items-center px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Submitting...
-              </>
-            ) : (
-              <>
-                <Send className="h-4 w-4 mr-2" />
-                Submit Concept Paper
-              </>
-            )}
-          </button>
-        </div>
+            
+            <button
+              type="button"
+              onClick={() => {
+                localStorage.setItem('conceptFormData', JSON.stringify(formik.values))
+                toast.success('Form saved as draft!')
+              }}
+              className="flex items-center px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
+              disabled={isSubmitting}
+            >
+              <Save className="h-4 w-4 mr-2" />
+              Save Draft
+            </button>
+            
+            <button
+              type="submit"
+              disabled={!(formik.values.hasRegistrationCert && formik.values.hasArticles && formik.values.hasCertGoodStanding && formik.values.hasReadImportantNote && formik.isValid) || isSubmitting}
+              className="flex items-center px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4 mr-2" />
+                  Submit Concept Paper
+                </>
+              )}
+            </button>
+          </div>
+        </fieldset>
       </form>
     </div>
   )
 }
 
-export default ConceptForm 
+export default ConceptForm
