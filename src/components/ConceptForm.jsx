@@ -983,7 +983,6 @@ const ConceptForm = () => {
           <div className="bg-white p-4 rounded-lg border space-y-6">
             {/* Co-financing Input */}
             <div>
-              <h4 className="font-medium text-gray-700 mb-3">Co-financing Information</h4>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="totalBudgetRequested" className="block text-sm font-medium text-gray-700 mb-1">
