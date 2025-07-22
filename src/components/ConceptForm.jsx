@@ -346,6 +346,9 @@ const ConceptForm = () => {
   // Get requirements for current selection
   const awardRequirements = getAwardRequirements(formik.values.awardCategory, totalBudgetRequested, formik.values.totalCoFinancing);
 
+  // Budget validation: totalBudgetRequested must not exceed awardRequirements.max
+  const isBudgetOverLimit = formik.values.awardCategory && awardRequirements.max !== Infinity && totalBudgetRequested > awardRequirements.max;
+
   const thematicAreas = [
     {
       id: 'TA2',
@@ -1154,6 +1157,13 @@ const ConceptForm = () => {
                         <td className="border border-gray-300 px-4 py-2">${totalBudgetRequested.toFixed(2)}</td>
                         <td className="border border-gray-300 px-4 py-2 text-center">{requestedPercentage}%</td>
                       </tr>
+                      {isBudgetOverLimit && (
+                        <tr>
+                          <td colSpan={3} className="text-red-600 text-sm font-semibold px-4 py-2 bg-red-50 border border-red-200">
+                            Total requested funds exceed the maximum allowed for this award category ({awardRequirements.fundingText}). Please adjust your budget.
+                          </td>
+                        </tr>
+                      )}
                       <tr className="bg-green-50 font-semibold">
                         <td className="border border-gray-300 px-4 py-2">Total Co-financing</td>
                         <td className="border border-gray-300 px-4 py-2">${(parseFloat(formik.values.totalCoFinancing) || 0).toFixed(2)}</td>
