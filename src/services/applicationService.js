@@ -1,6 +1,6 @@
 // const API_BASE_URL = 'https://belizefund.onrender.com/api';
 // const API_BASE_URL = 'http://localhost:5000/api';
-const API_BASE_URL = 'https://belizebackend.onrender.com/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 // Mock mode for testing without backend
 const MOCK_MODE = false; // Set to false when backend is available
@@ -651,7 +651,7 @@ class ApplicationService {
   }
 
   async submitCommunityProposal(proposalData) {
-    const response = await fetch('/api/applications/zoho/community-proposal', {
+    const response = await fetch(`${API_BASE_URL}/applications/zoho/community-proposal`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(proposalData),
