@@ -1,5 +1,6 @@
 // const API_BASE_URL = 'https://belizefund.onrender.com/api';
-const API_BASE_URL = 'http://localhost:5000/api';
+// const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://belizebackend.onrender.com/api';
 
 // Mock mode for testing without backend
 const MOCK_MODE = false; // Set to false when backend is available
