@@ -169,45 +169,18 @@ const CommunityProposalForm = () => {
     try {
       setIsLoading(true);
       const formData = getValues();
-
-      let currentApplicationId = applicationId;
-
-      // If no applicationId, save progress first to create one
-      if (!currentApplicationId) {
-        const newApplication = await applicationService.createApplication(
-          formData
-        );
-        currentApplicationId = newApplication._id;
-        setApplicationId(currentApplicationId);
-      }
-
-      const result = await applicationService.submitApplication(
-        currentApplicationId,
-        formData
-      );
-
-      if (result.zohoSuccess) {
-        toast.success(
-          "Community Proposal submitted successfully and record created in Zoho Creator! Thank you for your submission."
-        );
-      } else if (result.zohoError) {
-        toast.success(
-          "Community Proposal submitted successfully! Thank you for your submission."
-        );
-        toast.error(`Zoho Creator: ${result.zohoError}`);
+      const result = await applicationService.submitCommunityProposal(formData);
+      if (result.success) {
+        toast.success("Community Proposal submitted successfully and record created in Zoho Creator! Thank you for your submission.");
+        reset();
+        setCurrentStep(1);
+        setCompletedSteps([]);
+        setApplicationId(null);
       } else {
-        toast.success(
-          "Community Proposal submitted successfully! Thank you for your submission."
-        );
+        toast.error("Failed to submit Community Proposal");
       }
-
-      // Reset form to initial state after successful submission
-      reset();
-      setCurrentStep(1);
-      setCompletedSteps([]);
-      setApplicationId(null);
     } catch (error) {
-      toast.error("Failed to submit application");
+      toast.error("Failed to submit Community Proposal");
       console.error("Error submitting application:", error);
     } finally {
       setIsLoading(false);
