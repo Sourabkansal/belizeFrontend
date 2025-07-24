@@ -273,6 +273,36 @@ const Step1FrontPage = ({ register, errors, setValue, getValues, watch }) => {
             )}
           </div>
 
+          {/* Latitude and Longitude Fields */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="form-label">Latitude</label>
+              <input
+                type="number"
+                step="any"
+                {...register('latitude')}
+                className="form-input"
+                placeholder="e.g., 17.123456"
+              />
+              {errors.latitude && (
+                <p className="form-error">{errors.latitude.message}</p>
+              )}
+            </div>
+            <div>
+              <label className="form-label">Longitude</label>
+              <input
+                type="number"
+                step="any"
+                {...register('longitude')}
+                className="form-input"
+                placeholder="e.g., -88.123456"
+              />
+              {errors.longitude && (
+                <p className="form-error">{errors.longitude.message}</p>
+              )}
+            </div>
+          </div>
+
           <div>
             <label className="form-label">Detailed Location Description</label>
             <textarea
