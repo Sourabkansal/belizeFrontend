@@ -25,7 +25,7 @@ const Step1FrontPage = ({ register, errors, setValue, getValues, watch }) => {
         <h3 className="text-2xl font-bold text-gray-900 mb-2">
           Belize Fund For A Sustainable Future (Belize Fund)
         </h3>
-        <p className="text-lg text-gray-600">Community Grants Proposal Template - Front Page</p>
+        <p className="text-lg text-gray-600">Grants Award Program Proposal Application Form</p>
         <p className="text-sm text-gray-500 mt-2">(max 1 page)</p>
       </div>
 
@@ -148,7 +148,7 @@ const Step1FrontPage = ({ register, errors, setValue, getValues, watch }) => {
           <div className="md:col-span-2">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="form-label">Contact Info (Email) *</label>
+                <label className="form-label">Email *</label>
                 <input
                   type="email"
                   {...register('contactEmail')}
@@ -160,7 +160,7 @@ const Step1FrontPage = ({ register, errors, setValue, getValues, watch }) => {
                 )}
               </div>
               <div>
-                <label className="form-label">Contact Info (Telephone) *</label>
+                <label className="form-label">Telephone*</label>
                 <input
                   type="tel"
                   {...register('contactTelephone')}
@@ -223,6 +223,13 @@ const Step1FrontPage = ({ register, errors, setValue, getValues, watch }) => {
               <span className="text-gray-600">Months</span>
             </div>
           </div>
+        </div>
+        
+        {/* Grant Process Comment */}
+        <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <p className="text-sm text-blue-800 font-medium">
+            <span className="font-bold">Note:</span> The grant making process takes approximately 6 months, and therefore proposed start date should be in the month of February or March.
+          </p>
         </div>
       </div>
 

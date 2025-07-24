@@ -1,14 +1,28 @@
 import { useState, useEffect } from 'react'
-import { FileText, Building, Info, Users } from 'lucide-react'
+import { FileText, Building, Info, Users, Plus, X } from 'lucide-react'
 
 const Step2BackgroundInfo = ({ register, errors, setValue, getValues, watch }) => {
   const [summaryWordCount, setSummaryWordCount] = useState(0)
   const [orgBackgroundWordCount, setOrgBackgroundWordCount] = useState(0)
+  const [implementationTeamRows, setImplementationTeamRows] = useState([{ id: 1 }])
 
   // Word count helper function
   const countWords = (text) => {
     if (!text) return 0
     return text.trim().split(/\s+/).filter(word => word.length > 0).length
+  }
+
+  // Add new row to implementation team table
+  const addImplementationTeamRow = () => {
+    const newId = Math.max(...implementationTeamRows.map(row => row.id)) + 1
+    setImplementationTeamRows([...implementationTeamRows, { id: newId }])
+  }
+
+  // Remove row from implementation team table
+  const removeImplementationTeamRow = (id) => {
+    if (implementationTeamRows.length > 1) {
+      setImplementationTeamRows(implementationTeamRows.filter(row => row.id !== id))
+    }
   }
 
   // Monitor word counts
@@ -111,15 +125,15 @@ const Step2BackgroundInfo = ({ register, errors, setValue, getValues, watch }) =
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center">
             <Building className="h-6 w-6 text-green-600 mr-2" />
-            <h4 className="text-xl font-semibold text-gray-900">2. Organizational Background and Capacity (max-500 words)</h4>
+            <h4 className="text-xl font-semibold text-gray-900">2. Organizational Background and Capacity (max-250 words)</h4>
           </div>
-          <div className={`text-sm font-medium px-3 py-1 rounded-full ${
-            orgBackgroundWordCount > 500 ? 'bg-red-100 text-red-700' : 
-            orgBackgroundWordCount > 450 ? 'bg-yellow-100 text-yellow-700' : 
-            'bg-green-100 text-green-700'
-          }`}>
-            {orgBackgroundWordCount} / 500 words
-          </div>
+                      <div className={`text-sm font-medium px-3 py-1 rounded-full ${
+              orgBackgroundWordCount > 250 ? 'bg-red-100 text-red-700' : 
+              orgBackgroundWordCount > 225 ? 'bg-yellow-100 text-yellow-700' : 
+              'bg-green-100 text-green-700'
+            }`}>
+              {orgBackgroundWordCount} / 250 words
+            </div>
         </div>
 
         <div className="space-y-6">
@@ -196,7 +210,7 @@ const Step2BackgroundInfo = ({ register, errors, setValue, getValues, watch }) =
 
           {/* Organizational Background Narrative */}
           <div>
-            <label className="form-label">Organizational Background and Capacity * (Maximum 500 words)</label>
+            <label className="form-label">Organizational Background and Capacity * (Maximum 250 words)</label>
             <textarea
               {...register('organizationalBackground')}
               className="form-input min-h-[300px]"
@@ -205,9 +219,9 @@ const Step2BackgroundInfo = ({ register, errors, setValue, getValues, watch }) =
             {errors.organizationalBackground && (
               <p className="form-error">{errors.organizationalBackground.message}</p>
             )}
-            {orgBackgroundWordCount > 500 && (
+            {orgBackgroundWordCount > 250 && (
               <p className="text-red-600 text-sm mt-1">
-                ⚠️ Background exceeds 500-word limit. Please reduce by {orgBackgroundWordCount - 500} words.
+                ⚠️ Background exceeds 250-word limit. Please reduce by {orgBackgroundWordCount - 250} words.
               </p>
             )}
           </div>
@@ -215,32 +229,97 @@ const Step2BackgroundInfo = ({ register, errors, setValue, getValues, watch }) =
           {/* Project Implementation Team */}
           <div className="bg-white p-4 rounded-lg border border-green-100">
             <h5 className="font-medium text-gray-900 mb-3">Project Implementation Team</h5>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="form-label">Project Manager Name *</label>
-                <input
-                  type="text"
-                  {...register('projectManagerName')}
-                  className="form-input"
-                  placeholder="Full name of project manager"
-                />
-                {errors.projectManagerName && (
-                  <p className="form-error">{errors.projectManagerName.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="form-label">Project Manager Qualifications *</label>
-                <textarea
-                  {...register('projectManagerQualifications')}
-                  className="form-input"
-                  rows="3"
-                  placeholder="Brief description of qualifications and experience"
-                />
-                {errors.projectManagerQualifications && (
-                  <p className="form-error">{errors.projectManagerQualifications.message}</p>
-                )}
-              </div>
+            
+            {/* Implementation Team Table */}
+            <div className="overflow-x-auto">
+              <table className="min-w-full border border-gray-300">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="border border-gray-300 px-4 py-2 text-center font-medium text-gray-900">Name</th>
+                    <th className="border border-gray-300 px-4 py-2 text-center font-medium text-gray-900">Position</th>
+                    <th className="border border-gray-300 px-4 py-2 text-center font-medium text-gray-900">
+                      <div>Project Management</div>
+                      <div>experience</div>
+                    </th>
+                    <th className="border border-gray-300 px-4 py-2 text-center font-medium text-gray-900">
+                      <div>Updated CV</div>
+                      <div>(?)</div>
+                    </th>
+                    <th className="border border-gray-300 px-4 py-2 text-center font-medium text-gray-900 w-16">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {implementationTeamRows.map((row, index) => (
+                    <tr key={row.id}>
+                      <td className="border border-gray-300 px-4 py-2">
+                        <input
+                          type="text"
+                          {...register(`implementationTeam.${index}.name`)}
+                          className="w-full px-2 py-1 border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          placeholder="Enter name"
+                        />
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2">
+                        <input
+                          type="text"
+                          {...register(`implementationTeam.${index}.position`)}
+                          className="w-full px-2 py-1 border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          placeholder="Enter position"
+                        />
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2">
+                        <textarea
+                          {...register(`implementationTeam.${index}.projectManagementExperience`)}
+                          className="w-full px-2 py-1 border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          rows="2"
+                          placeholder="Describe experience"
+                        />
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2">
+                        <input
+                          type="file"
+                          accept=".pdf,.doc,.docx"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              setValue(`implementationTeam.${index}.cvFile`, file);
+                            }
+                          }}
+                          className="w-full text-sm text-gray-500
+                            file:mr-2 file:py-1 file:px-2
+                            file:rounded file:border-0
+                            file:text-xs file:font-medium
+                            file:bg-blue-50 file:text-blue-700
+                            hover:file:bg-blue-100"
+                        />
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2 text-center">
+                        {implementationTeamRows.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeImplementationTeamRow(row.id)}
+                            className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors duration-200"
+                            title="Remove row"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            
+            {/* Add Row Button */}
+            <div className="mt-4">
+              <button
+                type="button"
+                onClick={addImplementationTeamRow}
+                className="flex items-center space-x-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200"
+              >
+                <span>+ Add Row</span>
+              </button>
             </div>
           </div>
 
