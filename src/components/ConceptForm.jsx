@@ -96,6 +96,10 @@ const conceptSchema = yup.object().shape({
     then: yup.string().required('Please specify organization type')
   }),
   dateOfIncorporation: yup.date().required('Date of incorporation is required'),
+  activeMonths: yup.number()
+    .required('Active months is required')
+    .positive('Active months must be positive')
+    .integer('Active months must be a whole number'),
   
   // Main Contact
   contactName: yup.string().required('Contact name is required'),
@@ -204,6 +208,7 @@ const ConceptForm = () => {
       organizationType: '',
       otherOrganizationType: '',
       dateOfIncorporation: '',
+      activeMonths: '',
       
       // Main Contact
       contactName: '',
@@ -399,10 +404,10 @@ const ConceptForm = () => {
   const checkEligibility = () => {
     setEligibilityChecked(true);
     setEligibilityError('');
-    const { organizationName, organizationType, contactEmail, dateOfIncorporation } = formik.values;
+    const { organizationName, organizationType, contactEmail, dateOfIncorporation, activeMonths } = formik.values;
     let errorMsg = '';
-    if (!organizationName || !organizationType || !contactEmail || !dateOfIncorporation) {
-      errorMsg = 'Please fill Organization Name, Organization Type, Contact Email, and Date of Incorporation to check eligibility.';
+    if (!organizationName || !organizationType || !contactEmail || !dateOfIncorporation || !activeMonths) {
+      errorMsg = 'Please fill Organization Name, Organization Type, Contact Email, Date of Incorporation, and Active Months to check eligibility.';
     } else {
       // Simple email validation
       const emailValid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(contactEmail);
@@ -415,8 +420,14 @@ const ConceptForm = () => {
         const oneYearAgo = new Date();
         oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
         const incDate = new Date(dateOfIncorporation);
-        if (isNaN(incDate.getTime()) || incDate > oneYearAgo) {
-          errorMsg = 'Date of Incorporation must be at least 1 year before today.';
+        const isDateValid = !isNaN(incDate.getTime()) && incDate <= oneYearAgo;
+        
+        // Check if active months is at least 12
+        const isActiveMonthsValid = parseInt(activeMonths) >= 12;
+        
+        // User is eligible if EITHER date is valid OR active months is valid
+        if (!isDateValid && !isActiveMonthsValid) {
+          errorMsg = 'Organization must either be incorporated for at least 1 year OR be active for at least 12 months to be eligible.';
         }
       }
     }
@@ -584,6 +595,22 @@ const ConceptForm = () => {
                 />
                 {formik.touched.dateOfIncorporation && formik.errors.dateOfIncorporation && (
                   <p className="text-red-500 text-sm mt-1">{formik.errors.dateOfIncorporation}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Active Months <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="number"
+                  {...formik.getFieldProps('activeMonths')}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter number of months"
+                  min="1"
+                />
+                {formik.touched.activeMonths && formik.errors.activeMonths && (
+                  <p className="text-red-500 text-sm mt-1">{formik.errors.activeMonths}</p>
                 )}
               </div>
             </div>

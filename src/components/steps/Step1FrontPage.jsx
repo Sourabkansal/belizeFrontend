@@ -146,27 +146,32 @@ const Step1FrontPage = ({ register, errors, setValue, getValues, watch }) => {
           </div>
 
           <div className="md:col-span-2">
-            <label className="form-label">Contact Info (Email and Telephone) *</label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input
-                type="email"
-                {...register('contactEmail')}
-                className="form-input"
-                placeholder="primary.contact@organization.com"
-              />
-              <input
-                type="tel"
-                {...register('contactTelephone')}
-                className="form-input"
-                placeholder="Include country code (e.g., +501-123-4567)"
-              />
+              <div>
+                <label className="form-label">Contact Info (Email) *</label>
+                <input
+                  type="email"
+                  {...register('contactEmail')}
+                  className="form-input"
+                  placeholder="primary.contact@organization.com"
+                />
+                {errors.contactEmail && (
+                  <p className="form-error">{errors.contactEmail.message}</p>
+                )}
+              </div>
+              <div>
+                <label className="form-label">Contact Info (Telephone) *</label>
+                <input
+                  type="tel"
+                  {...register('contactTelephone')}
+                  className="form-input"
+                  placeholder="Include country code (e.g., +501-123-4567)"
+                />
+                {errors.contactTelephone && (
+                  <p className="form-error">{errors.contactTelephone.message}</p>
+                )}
+              </div>
             </div>
-            {errors.contactEmail && (
-              <p className="form-error">{errors.contactEmail.message}</p>
-            )}
-            {errors.contactTelephone && (
-              <p className="form-error">{errors.contactTelephone.message}</p>
-            )}
           </div>
         </div>
       </div>
@@ -271,82 +276,6 @@ const Step1FrontPage = ({ register, errors, setValue, getValues, watch }) => {
             />
             {errors.detailedLocationDescription && (
               <p className="form-error">{errors.detailedLocationDescription.message}</p>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Project Budget Summary Section */}
-      <div className="bg-indigo-50 p-6 rounded-lg border border-indigo-200">
-        <div className="flex items-center mb-4">
-          <DollarSign className="h-6 w-6 text-indigo-600 mr-2" />
-          <h4 className="text-xl font-semibold text-gray-900">5. Project Budget Summary</h4>
-        </div>
-        
-        <div className="space-y-4">
-          <p className="text-sm text-gray-600 mb-4">
-            Please provide a list of partner organizations and the total contribution towards the project. 
-            Refer to the Belize Fund Award Category of the Call for Proposals for guidance on budget and co-financing. 
-            Include all cash and in-kind contributions made by the organization(s).
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <label className="form-label">Total Project Cost (BZD) *</label>
-              <input
-                type="number"
-                {...register('totalProjectCost')}
-                className="form-input"
-                placeholder="0.00"
-                step="0.01"
-                min="0"
-              />
-              {errors.totalProjectCost && (
-                <p className="form-error">{errors.totalProjectCost.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="form-label">Amount Requested from Belize Fund (BZD) *</label>
-              <input
-                type="number"
-                {...register('amountRequested')}
-                className="form-input"
-                placeholder="0.00"
-                step="0.01"
-                min="0"
-              />
-              {errors.amountRequested && (
-                <p className="form-error">{errors.amountRequested.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="form-label">Total Co-Financing (BZD) *</label>
-              <input
-                type="number"
-                {...register('totalCoFinancing')}
-                className="form-input"
-                placeholder="0.00"
-                step="0.01"
-                min="0"
-              />
-              {errors.totalCoFinancing && (
-                <p className="form-error">{errors.totalCoFinancing.message}</p>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <label className="form-label">Partner Organizations and Contributions</label>
-            <textarea
-              {...register('partnerOrganizations')}
-              className="form-input"
-              rows="4"
-              placeholder="List partner organizations and their contributions (cash and in-kind) to the project"
-            />
-            {errors.partnerOrganizations && (
-              <p className="form-error">{errors.partnerOrganizations.message}</p>
             )}
           </div>
         </div>
