@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { FileText, Building, Info, Users, Plus, X } from 'lucide-react'
+import PrefilledField from '../PrefilledField'
 
-const Step2BackgroundInfo = ({ register, errors, setValue, getValues, watch }) => {
+const Step2BackgroundInfo = ({ register, errors, setValue, getValues, watch, userData }) => {
   const [summaryWordCount, setSummaryWordCount] = useState(0)
   const [orgBackgroundWordCount, setOrgBackgroundWordCount] = useState(0)
   const [implementationTeamRows, setImplementationTeamRows] = useState([{ id: 1 }])
@@ -93,28 +94,48 @@ const Step2BackgroundInfo = ({ register, errors, setValue, getValues, watch }) =
           {/* Thematic Area Selection */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="form-label">Primary Belize Fund Thematic Area *</label>
-              <select {...register('primaryThematicArea')} className="form-input">
-                <option value="">Select primary thematic area</option>
-                <option value="TA1">TA 1: Protection for Biodiversity</option>
-                <option value="TA2">TA 2: Sustainable Fisheries</option>
-                <option value="TA3">TA 3: Climate Resilience</option>
-                <option value="TA4">TA 4: Blue Business Innovation</option>
-              </select>
-              {errors.primaryThematicArea && (
-                <p className="form-error">{errors.primaryThematicArea.message}</p>
+              {userData ? (
+                <PrefilledField
+                  label="Primary Belize Fund Thematic Area *"
+                  value={userData.primaryThematicArea}
+                  fieldName="Project_Theme from Concept Paper"
+                />
+              ) : (
+                <>
+                  <label className="form-label">Primary Belize Fund Thematic Area *</label>
+                  <select {...register('primaryThematicArea')} className="form-input">
+                    <option value="">Select primary thematic area</option>
+                    <option value="TA1">TA 1: Protection for Biodiversity</option>
+                    <option value="TA2">TA 2: Sustainable Fisheries</option>
+                    <option value="TA3">TA 3: Climate Resilience</option>
+                    <option value="TA4">TA 4: Blue Business Innovation</option>
+                  </select>
+                  {errors.primaryThematicArea && (
+                    <p className="form-error">{errors.primaryThematicArea.message}</p>
+                  )}
+                </>
               )}
             </div>
 
             <div>
-              <label className="form-label">Secondary Thematic Area (if applicable)</label>
-              <select {...register('secondaryThematicArea')} className="form-input">
-                <option value="">Select secondary thematic area</option>
-                <option value="TA1">TA 1: Protection for Biodiversity</option>
-                <option value="TA2">TA 2: Sustainable Fisheries</option>
-                <option value="TA3">TA 3: Climate Resilience</option>
-                <option value="TA4">TA 4: Blue Business Innovation</option>
-              </select>
+              {userData ? (
+                <PrefilledField
+                  label="Secondary Thematic Area (if applicable)"
+                  value={userData.secondaryThematicArea}
+                  fieldName="Award_Category1 from Concept Paper"
+                />
+              ) : (
+                <>
+                  <label className="form-label">Secondary Thematic Area (if applicable)</label>
+                  <select {...register('secondaryThematicArea')} className="form-input">
+                    <option value="">Select secondary thematic area</option>
+                    <option value="TA1">TA 1: Protection for Biodiversity</option>
+                    <option value="TA2">TA 2: Sustainable Fisheries</option>
+                    <option value="TA3">TA 3: Climate Resilience</option>
+                    <option value="TA4">TA 4: Blue Business Innovation</option>
+                  </select>
+                </>
+              )}
             </div>
           </div>
         </div>

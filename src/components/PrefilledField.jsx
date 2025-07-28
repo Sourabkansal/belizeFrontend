@@ -5,21 +5,17 @@ const PrefilledField = ({
   value, 
   className = "", 
   showLockIcon = true,
-  fieldName = "" 
+  fieldName = "",
+  isDate = false
 }) => {
   return (
     <div className={`mb-4 ${className}`}>
       <label className="block text-sm font-medium text-gray-700 mb-2">
         {label}
-        {showLockIcon && (
-          <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-            🔒 Pre-filled from Concept Paper
-          </span>
-        )}
       </label>
       <div className="relative">
         <input
-          type="text"
+          type={isDate ? "date" : "text"}
           value={value || ''}
           readOnly
           className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
@@ -44,11 +40,7 @@ const PrefilledField = ({
           </div>
         )}
       </div>
-      {fieldName && (
-        <p className="mt-1 text-xs text-gray-500">
-          Auto-filled from: {fieldName}
-        </p>
-      )}
+      
     </div>
   );
 };

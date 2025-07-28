@@ -85,7 +85,6 @@ const MultiStepForm = () => {
       setValue('longitude', userData.longitude);
       
       // Additional contact and organization fields
-      setValue('dateOfIncorporation', userData.dateOfIncorporation);
       setValue('contactPosition', userData.contactPosition);
       setValue('contactTelephone', userData.contactTelephone);
       
@@ -273,17 +272,7 @@ const MultiStepForm = () => {
             </div>
           )}
 
-          {/* User Data Found Indicator */}
-          {userData && !userDataLoading && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-              <div className="flex items-center">
-                <span className="text-green-600 mr-2">✅</span>
-                <span className="text-green-800 font-medium">
-                  Concept paper data loaded! Contact Name, Project Title, Organization Name, Organization Address, Type of Organization, Date of Incorporation, Position, Telephone, and Project Duration will be pre-filled and locked.
-                </span>
-              </div>
-            </div>
-          )}
+
 
           <form onSubmit={handleSubmit(nextStep)} className="space-y-6">
             {CurrentStepComponent && (

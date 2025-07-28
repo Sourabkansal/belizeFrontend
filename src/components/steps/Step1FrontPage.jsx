@@ -138,25 +138,15 @@ const Step1FrontPage = ({ register, errors, setValue, getValues, watch, userData
           </div>
 
           <div>
-            {userData ? (
-              <PrefilledField
-                label="Date of Incorporation of Organization *"
-                value={userData.dateOfIncorporation}
-                fieldName="Date_of_incorporation_of_Organization from Concept Paper"
-              />
-            ) : (
-              <>
-                <label className="form-label">Date of Incorporation of Organization *</label>
-                <input
-                  type="date"
-                  {...register('dateOfIncorporation')}
-                  className="form-input"
-                  placeholder="(mm/dd/yyyy)"
-                />
-                {errors.dateOfIncorporation && (
-                  <p className="form-error">{errors.dateOfIncorporation.message}</p>
-                )}
-              </>
+            <label className="form-label">Date of Incorporation of Organization *</label>
+            <input
+              type="date"
+              {...register('dateOfIncorporation')}
+              className="form-input"
+              placeholder="(mm/dd/yyyy)"
+            />
+            {errors.dateOfIncorporation && (
+              <p className="form-error">{errors.dateOfIncorporation.message}</p>
             )}
           </div>
         </div>

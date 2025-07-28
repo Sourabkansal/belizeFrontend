@@ -137,7 +137,6 @@ const CommunityProposalForm = () => {
       setValue('longitude', userData.longitude);
       
       // Additional contact and organization fields
-      setValue('dateOfIncorporation', userData.dateOfIncorporation);
       setValue('contactPosition', userData.contactPosition);
       setValue('contactTelephone', userData.contactTelephone);
       
