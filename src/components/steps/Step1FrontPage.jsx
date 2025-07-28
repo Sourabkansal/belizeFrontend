@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Calendar, MapPin, DollarSign, Building2, User, Clock } from 'lucide-react'
+import PrefilledField from '../PrefilledField'
 
-const Step1FrontPage = ({ register, errors, setValue, getValues, watch }) => {
+const Step1FrontPage = ({ register, errors, setValue, getValues, watch, userData }) => {
   const [projectDuration, setProjectDuration] = useState('')
   
   // Calculate project duration in months
@@ -38,74 +39,124 @@ const Step1FrontPage = ({ register, errors, setValue, getValues, watch }) => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="md:col-span-2">
-            <label className="form-label">Project Title * (max 15 words)</label>
-            <input
-              type="text"
-              {...register('projectTitle')}
-              className="form-input"
-              placeholder="Please limit to 15 words or less"
-              maxLength="100"
-            />
-            {errors.projectTitle && (
-              <p className="form-error">{errors.projectTitle.message}</p>
-            )}
-            <p className="text-sm text-gray-500 mt-1">
-              {watch('projectTitle')?.split(' ').length || 0} / 15 words
-            </p>
-          </div>
-
-          <div>
-            <label className="form-label">Organization Name *</label>
-            <input
-              type="text"
-              {...register('organizationName')}
-              className="form-input"
-              placeholder="Name of applying/lead organization"
-            />
-            {errors.organizationName && (
-              <p className="form-error">{errors.organizationName.message}</p>
+            {userData ? (
+              <PrefilledField
+                label="Project Title * (max 15 words)"
+                value={userData.projectTitle}
+                fieldName="Project_Title from Concept Paper"
+              />
+            ) : (
+              <>
+                <label className="form-label">Project Title * (max 15 words)</label>
+                <input
+                  type="text"
+                  {...register('projectTitle')}
+                  className="form-input"
+                  placeholder="Please limit to 15 words or less"
+                  maxLength="100"
+                />
+                {errors.projectTitle && (
+                  <p className="form-error">{errors.projectTitle.message}</p>
+                )}
+                <p className="text-sm text-gray-500 mt-1">
+                  {watch('projectTitle')?.split(' ').length || 0} / 15 words
+                </p>
+              </>
             )}
           </div>
 
           <div>
-            <label className="form-label">Organization Address *</label>
-            <textarea
-              {...register('organizationAddress')}
-              className="form-input"
-              rows="3"
-              placeholder="Headquarters/office"
-            />
-            {errors.organizationAddress && (
-              <p className="form-error">{errors.organizationAddress.message}</p>
+            {userData ? (
+              <PrefilledField
+                label="Organization Name *"
+                value={userData.organizationName}
+                fieldName="Organization_Name from Concept Paper"
+              />
+            ) : (
+              <>
+                <label className="form-label">Organization Name *</label>
+                <input
+                  type="text"
+                  {...register('organizationName')}
+                  className="form-input"
+                  placeholder="Name of applying/lead organization"
+                />
+                {errors.organizationName && (
+                  <p className="form-error">{errors.organizationName.message}</p>
+                )}
+              </>
             )}
           </div>
 
           <div>
-            <label className="form-label">Type of Organization *</label>
-            <select {...register('organizationType')} className="form-input">
-              <option value="">Select organization type</option>
-              <option value="NGO">NGO</option>
-              <option value="Private">Private</option>
-              <option value="Community-based Organization">Community-based organization/association</option>
-              <option value="Government Agency">Government Agency</option>
-              <option value="Academic Institution">Academic Institution</option>
-              <option value="Other">Other</option>
-            </select>
-            {errors.organizationType && (
-              <p className="form-error">{errors.organizationType.message}</p>
+            {userData ? (
+              <PrefilledField
+                label="Organization Address *"
+                value={userData.organizationAddress}
+                fieldName="Organization_Address from Concept Paper"
+              />
+            ) : (
+              <>
+                <label className="form-label">Organization Address *</label>
+                <textarea
+                  {...register('organizationAddress')}
+                  className="form-input"
+                  rows="3"
+                  placeholder="Headquarters/office"
+                />
+                {errors.organizationAddress && (
+                  <p className="form-error">{errors.organizationAddress.message}</p>
+                )}
+              </>
             )}
           </div>
 
           <div>
-            <label className="form-label">Date of Incorporation of Organization *</label>
-            <input
-              type="date"
-              {...register('dateOfIncorporation')}
-              className="form-input"
-              placeholder="(mm/dd/yyyy)"
-            />
-            {errors.dateOfIncorporation && (
-              <p className="form-error">{errors.dateOfIncorporation.message}</p>
+            {userData ? (
+              <PrefilledField
+                label="Type of Organization *"
+                value={userData.organizationType}
+                fieldName="Type_of_Organization from Concept Paper"
+              />
+            ) : (
+              <>
+                <label className="form-label">Type of Organization *</label>
+                <select {...register('organizationType')} className="form-input">
+                  <option value="">Select organization type</option>
+                  <option value="NGO">NGO</option>
+                  <option value="Private">Private</option>
+                  <option value="Community-based Organization">Community-based organization/association</option>
+                  <option value="Government Agency">Government Agency</option>
+                  <option value="Academic Institution">Academic Institution</option>
+                  <option value="Other">Other</option>
+                </select>
+                {errors.organizationType && (
+                  <p className="form-error">{errors.organizationType.message}</p>
+                )}
+              </>
+            )}
+          </div>
+
+          <div>
+            {userData ? (
+              <PrefilledField
+                label="Date of Incorporation of Organization *"
+                value={userData.dateOfIncorporation}
+                fieldName="Date_of_incorporation_of_Organization from Concept Paper"
+              />
+            ) : (
+              <>
+                <label className="form-label">Date of Incorporation of Organization *</label>
+                <input
+                  type="date"
+                  {...register('dateOfIncorporation')}
+                  className="form-input"
+                  placeholder="(mm/dd/yyyy)"
+                />
+                {errors.dateOfIncorporation && (
+                  <p className="form-error">{errors.dateOfIncorporation.message}</p>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -120,28 +171,48 @@ const Step1FrontPage = ({ register, errors, setValue, getValues, watch }) => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="form-label">Contact Name *</label>
-            <input
-              type="text"
-              {...register('contactName')}
-              className="form-input"
-              placeholder="Full name of main contact person"
-            />
-            {errors.contactName && (
-              <p className="form-error">{errors.contactName.message}</p>
+            {userData ? (
+              <PrefilledField
+                label="Contact Name *"
+                value={userData.contactName}
+                fieldName="Contact_Name from Concept Paper"
+              />
+            ) : (
+              <>
+                <label className="form-label">Contact Name *</label>
+                <input
+                  type="text"
+                  {...register('contactName')}
+                  className="form-input"
+                  placeholder="Full name of main contact person"
+                />
+                {errors.contactName && (
+                  <p className="form-error">{errors.contactName.message}</p>
+                )}
+              </>
             )}
           </div>
 
           <div>
-            <label className="form-label">Position *</label>
-            <input
-              type="text"
-              {...register('contactPosition')}
-              className="form-input"
-              placeholder="Job title/position in organization"
-            />
-            {errors.contactPosition && (
-              <p className="form-error">{errors.contactPosition.message}</p>
+            {userData ? (
+              <PrefilledField
+                label="Position *"
+                value={userData.contactPosition}
+                fieldName="Position from Concept Paper"
+              />
+            ) : (
+              <>
+                <label className="form-label">Position *</label>
+                <input
+                  type="text"
+                  {...register('contactPosition')}
+                  className="form-input"
+                  placeholder="Job title/position in organization"
+                />
+                {errors.contactPosition && (
+                  <p className="form-error">{errors.contactPosition.message}</p>
+                )}
+              </>
             )}
           </div>
 
@@ -160,15 +231,25 @@ const Step1FrontPage = ({ register, errors, setValue, getValues, watch }) => {
                 )}
               </div>
               <div>
-                <label className="form-label">Telephone*</label>
-                <input
-                  type="tel"
-                  {...register('contactTelephone')}
-                  className="form-input"
-                  placeholder="Include country code (e.g., +501-123-4567)"
-                />
-                {errors.contactTelephone && (
-                  <p className="form-error">{errors.contactTelephone.message}</p>
+                {userData ? (
+                  <PrefilledField
+                    label="Telephone*"
+                    value={userData.contactTelephone}
+                    fieldName="Telephone from Concept Paper"
+                  />
+                ) : (
+                  <>
+                    <label className="form-label">Telephone*</label>
+                    <input
+                      type="tel"
+                      {...register('contactTelephone')}
+                      className="form-input"
+                      placeholder="Include country code (e.g., +501-123-4567)"
+                    />
+                    {errors.contactTelephone && (
+                      <p className="form-error">{errors.contactTelephone.message}</p>
+                    )}
+                  </>
                 )}
               </div>
             </div>
@@ -211,17 +292,28 @@ const Step1FrontPage = ({ register, errors, setValue, getValues, watch }) => {
           </div>
 
           <div>
-            <label className="form-label">Project Duration</label>
-            <div className="flex items-center space-x-2">
-              <input
-                type="number"
-                value={projectDuration}
-                readOnly
-                className="form-input bg-gray-100"
-                placeholder="Months"
+            {userData ? (
+              <PrefilledField
+                label="Project Duration"
+                value={userData.durationMonths}
+                fieldName="Duration_Months from Concept Paper"
+                showLockIcon={true}
               />
-              <span className="text-gray-600">Months</span>
-            </div>
+            ) : (
+              <>
+                <label className="form-label">Project Duration</label>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="number"
+                    value={projectDuration}
+                    readOnly
+                    className="form-input bg-gray-100"
+                    placeholder="Months"
+                  />
+                  <span className="text-gray-600">Months</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
         

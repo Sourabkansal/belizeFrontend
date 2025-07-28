@@ -7,6 +7,7 @@ import { Save, Send, ArrowLeft, ArrowRight, FileText } from "lucide-react";
 import StepIndicator from "./StepIndicator";
 import { getStepSchema } from "../validation/schemas";
 import { applicationService } from "../services/applicationService";
+import { useUserData } from "../context/UserDataContext";
 
 // Import Community Proposal step components
 import Step1FrontPage from "./steps/Step1FrontPage";
@@ -89,6 +90,9 @@ const CommunityProposalForm = () => {
   const [applicationId, setApplicationId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  
+  // Get user data from context
+  const { userData, loading: userDataLoading } = useUserData();
 
   const {
     register,
@@ -103,6 +107,43 @@ const CommunityProposalForm = () => {
     resolver: yupResolver(getStepSchema(currentStep)),
     mode: "onChange",
   });
+
+  // Prefill form with user data when available
+  useEffect(() => {
+    if (userData && !userDataLoading) {
+      console.log('🔄 Prefilling Community Proposal form with user data:', userData);
+      
+      // Prefill relevant fields
+      setValue('contactName', userData.contactName);
+      setValue('projectTitle', userData.projectTitle);
+      setValue('contactEmail', userData.email);
+      setValue('projectSummary', userData.projectSummary);
+      setValue('projectDurationMonths', userData.durationMonths);
+      setValue('proposedStartDate', userData.proposedStartDate);
+      setValue('totalBudgetRequested', userData.totalBudget);
+      setValue('totalCoFinancing', userData.totalCoFinancing);
+      setValue('totalProjectCost', userData.totalProjectCost);
+      
+      // Additional fields from concept paper
+      setValue('organizationName', userData.organizationName);
+      setValue('organizationAddress', userData.organizationAddress);
+      setValue('organizationType', userData.organizationType);
+      setValue('thematicArea', userData.thematicArea);
+      setValue('primaryThematicArea', userData.primaryThematicArea);
+      setValue('secondaryThematicArea', userData.secondaryThematicArea);
+      setValue('logicalFrameworkGoal', userData.goal);
+      setValue('primaryLocation', userData.detailedLocationDescription);
+      setValue('latitude', userData.latitude);
+      setValue('longitude', userData.longitude);
+      
+      // Additional contact and organization fields
+      setValue('dateOfIncorporation', userData.dateOfIncorporation);
+      setValue('contactPosition', userData.contactPosition);
+      setValue('contactTelephone', userData.contactTelephone);
+      
+      console.log('✅ Community Proposal form prefilled successfully');
+    }
+  }, [userData, userDataLoading, setValue]);
 
   const saveProgress = async (stepData = null) => {
     try {

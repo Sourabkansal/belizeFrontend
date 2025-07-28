@@ -7,6 +7,7 @@ import { Save, Send, ArrowLeft, ArrowRight, FileText } from 'lucide-react'
 import StepIndicator from './StepIndicator'
 import { getStepSchema } from '../validation/schemas'
 import { applicationService } from '../services/applicationService'
+import { useUserData } from '../context/UserDataContext'
 
 // Import new GAP step components
 import Step1FrontPage from './steps/Step1FrontPage'
@@ -37,6 +38,9 @@ const MultiStepForm = () => {
   const [applicationId, setApplicationId] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  
+  // Get user data from context
+  const { userData, loading: userDataLoading } = useUserData()
 
   const {
     register,
@@ -51,6 +55,43 @@ const MultiStepForm = () => {
     resolver: yupResolver(getStepSchema(currentStep)),
     mode: 'onChange'
   })
+
+  // Prefill form with user data when available
+  useEffect(() => {
+    if (userData && !userDataLoading) {
+      console.log('🔄 Prefilling GAP form with user data:', userData);
+      
+      // Prefill relevant fields
+      setValue('contactName', userData.contactName);
+      setValue('projectTitle', userData.projectTitle);
+      setValue('contactEmail', userData.email);
+      setValue('projectSummary', userData.projectSummary);
+      setValue('projectDurationMonths', userData.durationMonths);
+      setValue('proposedStartDate', userData.proposedStartDate);
+      setValue('totalBudgetRequested', userData.totalBudget);
+      setValue('totalCoFinancing', userData.totalCoFinancing);
+      setValue('totalProjectCost', userData.totalProjectCost);
+      
+      // Additional fields from concept paper
+      setValue('organizationName', userData.organizationName);
+      setValue('organizationAddress', userData.organizationAddress);
+      setValue('organizationType', userData.organizationType);
+      setValue('thematicArea', userData.thematicArea);
+      setValue('primaryThematicArea', userData.primaryThematicArea);
+      setValue('secondaryThematicArea', userData.secondaryThematicArea);
+      setValue('logicalFrameworkGoal', userData.goal);
+      setValue('primaryLocation', userData.detailedLocationDescription);
+      setValue('latitude', userData.latitude);
+      setValue('longitude', userData.longitude);
+      
+      // Additional contact and organization fields
+      setValue('dateOfIncorporation', userData.dateOfIncorporation);
+      setValue('contactPosition', userData.contactPosition);
+      setValue('contactTelephone', userData.contactTelephone);
+      
+      console.log('✅ GAP form prefilled successfully');
+    }
+  }, [userData, userDataLoading, setValue]);
 
   const saveProgress = async (stepData = null) => {
     try {
@@ -220,6 +261,30 @@ const MultiStepForm = () => {
             </div>
           </div>
 
+          {/* User Data Loading Indicator */}
+          {userDataLoading && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <div className="flex items-center">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-3"></div>
+                <span className="text-blue-800 font-medium">
+                  Loading your concept paper data...
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* User Data Found Indicator */}
+          {userData && !userDataLoading && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+              <div className="flex items-center">
+                <span className="text-green-600 mr-2">✅</span>
+                <span className="text-green-800 font-medium">
+                  Concept paper data loaded! Contact Name, Project Title, Organization Name, Organization Address, Type of Organization, Date of Incorporation, Position, Telephone, and Project Duration will be pre-filled and locked.
+                </span>
+              </div>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit(nextStep)} className="space-y-6">
             {CurrentStepComponent && (
               <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
@@ -229,6 +294,7 @@ const MultiStepForm = () => {
                   setValue={setValue}
                   getValues={getValues}
                   watch={watch}
+                  userData={userData}
                 />
               </div>
             )}
