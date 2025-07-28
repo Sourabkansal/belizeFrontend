@@ -140,6 +140,9 @@ const CommunityProposalForm = () => {
       setValue('contactPosition', userData.contactPosition);
       setValue('contactTelephone', userData.contactTelephone);
       
+      // Step 4 - Implementation Plan fields
+      setValue('selectedThematicArea', userData.primaryThematicArea);
+      
       console.log('✅ Community Proposal form prefilled successfully');
     }
   }, [userData, userDataLoading, setValue]);

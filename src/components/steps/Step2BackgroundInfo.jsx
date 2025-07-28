@@ -102,16 +102,16 @@ const Step2BackgroundInfo = ({ register, errors, setValue, getValues, watch, use
                 />
               ) : (
                 <>
-                  <label className="form-label">Primary Belize Fund Thematic Area *</label>
-                  <select {...register('primaryThematicArea')} className="form-input">
-                    <option value="">Select primary thematic area</option>
-                    <option value="TA1">TA 1: Protection for Biodiversity</option>
-                    <option value="TA2">TA 2: Sustainable Fisheries</option>
-                    <option value="TA3">TA 3: Climate Resilience</option>
-                    <option value="TA4">TA 4: Blue Business Innovation</option>
-                  </select>
-                  {errors.primaryThematicArea && (
-                    <p className="form-error">{errors.primaryThematicArea.message}</p>
+              <label className="form-label">Primary Belize Fund Thematic Area *</label>
+              <select {...register('primaryThematicArea')} className="form-input">
+                <option value="">Select primary thematic area</option>
+                <option value="TA1">TA 1: Protection for Biodiversity</option>
+                <option value="TA2">TA 2: Sustainable Fisheries</option>
+                <option value="TA3">TA 3: Climate Resilience</option>
+                <option value="TA4">TA 4: Blue Business Innovation</option>
+              </select>
+              {errors.primaryThematicArea && (
+                <p className="form-error">{errors.primaryThematicArea.message}</p>
                   )}
                 </>
               )}
@@ -126,14 +126,14 @@ const Step2BackgroundInfo = ({ register, errors, setValue, getValues, watch, use
                 />
               ) : (
                 <>
-                  <label className="form-label">Secondary Thematic Area (if applicable)</label>
-                  <select {...register('secondaryThematicArea')} className="form-input">
-                    <option value="">Select secondary thematic area</option>
-                    <option value="TA1">TA 1: Protection for Biodiversity</option>
-                    <option value="TA2">TA 2: Sustainable Fisheries</option>
-                    <option value="TA3">TA 3: Climate Resilience</option>
-                    <option value="TA4">TA 4: Blue Business Innovation</option>
-                  </select>
+              <label className="form-label">Secondary Thematic Area (if applicable)</label>
+              <select {...register('secondaryThematicArea')} className="form-input">
+                <option value="">Select secondary thematic area</option>
+                <option value="TA1">TA 1: Protection for Biodiversity</option>
+                <option value="TA2">TA 2: Sustainable Fisheries</option>
+                <option value="TA3">TA 3: Climate Resilience</option>
+                <option value="TA4">TA 4: Blue Business Innovation</option>
+              </select>
                 </>
               )}
             </div>

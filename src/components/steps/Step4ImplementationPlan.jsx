@@ -1,6 +1,7 @@
 import { Calendar, Target, CheckCircle } from 'lucide-react'
+import PrefilledField from '../PrefilledField'
 
-const Step4ImplementationPlan = ({ register, errors, setValue, getValues, watch }) => {
+const Step4ImplementationPlan = ({ register, errors, setValue, getValues, watch, userData }) => {
   const thematicAreas = {
     TA1: {
       name: "Protection for Biodiversity",
@@ -73,6 +74,14 @@ const Step4ImplementationPlan = ({ register, errors, setValue, getValues, watch 
           </div>
 
           <div>
+            {userData ? (
+              <PrefilledField
+                label="Selected Thematic Area"
+                value={userData.primaryThematicArea}
+                fieldName="Project_Theme from Concept Paper"
+              />
+            ) : (
+              <>
             <label className="form-label">Selected Thematic Area</label>
             <select {...register('selectedThematicArea')} className="form-input">
               <option value="">Select your primary thematic area</option>
@@ -80,6 +89,8 @@ const Step4ImplementationPlan = ({ register, errors, setValue, getValues, watch 
                 <option key={key} value={key}>{key}: {area.name}</option>
               ))}
             </select>
+              </>
+            )}
           </div>
 
           {watch('selectedThematicArea') && (
