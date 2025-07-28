@@ -1,6 +1,172 @@
-import { Shield, AlertTriangle, FileCheck } from 'lucide-react'
+import { Shield, AlertTriangle, FileCheck, ChevronDown, Save, FileText } from 'lucide-react'
+import { useState } from 'react'
 
 const Step5RiskScreening = ({ register, errors, setValue, getValues, watch }) => {
+  const [essfFormData, setEssfFormData] = useState({});
+  const [expandedSections, setExpandedSections] = useState({});
+
+  // Risk rating options (1-5)
+  const riskOptions = [
+    { value: '', label: 'Select...' },
+    { value: '1', label: '1 - Very Low' },
+    { value: '2', label: '2 - Low' },
+    { value: '3', label: '3 - Medium' },
+    { value: '4', label: '4 - High' },
+    { value: '5', label: '5 - Very High' }
+  ];
+
+  const essData = [
+    {
+      code: 'ESS1',
+      title: 'Environmental and Social Risk Management',
+      questions: [
+        'raised human rights concerns (e.g. during the stakeholder engagement process, grievance processes, public statements) by local communities or individuals?',
+        'risk that duty-bearers (e.g. government agencies) do not have the capacity to meet their obligations in the project?',
+        'risk that rights-holders (e.g. project-affected persons) do not have the capacity to claim their rights?',
+        'adverse impacts on enjoyment of the human rights (civil, political, economic, social or cultural) of the affected population and particularly of marginalized groups?',
+        'inequitable or discriminatory impacts on affected populations, particularly people living in poverty or marginalized or excluded individuals or groups, including persons with disabilities?',
+        'restrictions in availability, quality of and/or access to resources or basic services, in particular to marginalized individuals or groups, including persons with disabilities?',
+        'exacerbation of conflicts among and/or the risk of violence to project-affected communities and individuals?',
+        'conflict with existing environmental regulations?'
+      ]
+    },
+    {
+      code: 'ESS2',
+      title: 'Conservation and Sustainable Management of Biodiversity, Natural Habitats and Living Natural Resources',
+      questions: [
+        'adverse impacts to habitats (e.g. modified, natural, and critical habitats) and/or ecosystems and ecosystem services? For example, through habitat loss, conversion or degradation, fragmentation, hydrological changes?',
+        'activities within or adjacent to critical habitats and/or environmentally sensitive areas, including (but not limited to) legally designated protected areas (e.g. marine reserves, wildlife sanctuaries, natural monuments, nature reserves, national parks), coastal areas proposed for protection, or recognized as such by authoritative sources and/or indigenous peoples or local communities?',
+        'changes to the use of lands and resources that may have adverse impacts on habitats, ecosystems, and/or livelihoods? (Note: if restrictions and/or limitations of access to lands would apply, refer to Standard 5)',
+        'infrastructure construction, upgrade, or decommissioning?',
+        'risks to endangered species (e.g. reduction, encroachment on habitat)?',
+        'exacerbation of illegal wildlife trade?',
+        'introduction of invasive alien species?',
+        'adverse impacts on land/soil (degradation, sedimentation, erosion of soil)?',
+        'harvesting of natural forests, plantation development, or reforestation?',
+        'significant agricultural production?',
+        'animal husbandry, aquaculture or harvesting of fish populations or other aquatic species?',
+        'utilization of genetic resources? (e.g. collection and/or harvesting, commercial development)',
+        'restoration or rehabilitation activities?',
+        'adverse transboundary or global environmental concerns?',
+        'outputs and outcomes sensitive or vulnerable to potential impacts of climate change or disasters? For example, through increased precipitation, drought, temperature, salinity, extreme events, earthquakes?',
+        'increases in vulnerability to climate change impacts or disaster risks now or in the future (also known as maladaptive or negative coping practices)? For example, changes to land use planning may encourage further development of floodplains, potentially?'
+      ]
+    },
+    {
+      code: 'ESS3',
+      title: 'Pollution Prevention',
+      questions: [
+        'the release of pollutants to the environment due to routine or non-routine circumstances with the potential for adverse local, regional, and/or transboundary impacts?',
+        'the generation of waste (both hazardous and non-hazardous)?',
+        'the manufacture, trade, release, and/or use of hazardous materials and/or chemicals?',
+        'the use of chemicals or materials subject to international bans or phase-outs? For example, DDT, PCBs and other chemicals listed in international conventions such as the Montreal Protocol, Minamata Convention, Basel Convention, Rotterdam Convention, Stockholm Convention?',
+        'the application of pesticides that may have a negative effect on the environment or human health?',
+        'significant consumption of raw materials, energy, and/or water?',
+        'risks/impacts of pollution that can impact Occupational Health and Safety?',
+        'risks/impacts on water quality?',
+        'risks/impacts on air quality?'
+      ]
+    },
+    {
+      code: 'ESS4',
+      title: 'Land Acquisition and Involuntary Resettlement',
+      questions: [
+        'economic displacement (e.g. loss of assets or access to resources due to land acquisition or access restrictions – even in the absence of physical relocation)?',
+        'impacts on or changes to land tenure arrangements and/or community-based property rights/customary rights to land, territories and/or resources?',
+        'new restrictions of, or access to, natural resources?'
+      ]
+    },
+    {
+      code: 'ESS5',
+      title: 'Labor and Working Conditions',
+      questions: [
+        'working conditions that do not meet national labour laws and international commitments?',
+        'working conditions that may deny freedom of association and collective bargaining?',
+        'use of child labour and forced labour?',
+        'discriminatory working conditions and/or lack of equal opportunity?',
+        'occupational health and safety risks due to physical, chemical, biological and psychosocial hazards (including violence and harassment) throughout the project life-cycle?',
+        'the physical integrity of the persons working on the project compromised by external factor? (security risks)',
+        'persons working on the project be exposed to toxic and flammable substances including fuel?',
+        'persons working on the project operate heavy duty machinery (equipment for marine/coastal activities, farming, etc.)',
+        'persons operating equipment in project activities (including scuba gear, boats and vehicles)?',
+        'community labour (including stipends for volunteers)?'
+      ]
+    },
+    {
+      code: 'ESS6',
+      title: 'Physical Cultural Heritage',
+      questions: [
+        'alterations to landscapes and natural features with cultural significance? (e.g. significant excavations, demolitions, etc)',
+        'utilization of tangible and/or intangible forms (e.g. practices, traditional knowledge) of Cultural Heritage for commercial or other purposes?',
+        'restrict access to sacred sites or natural sites of cultural, spiritual significance?'
+      ]
+    },
+    {
+      code: 'ESS7',
+      title: 'Stakeholder Engagement and Information Disclosure',
+      questions: [
+        'identification of vulnerable and disadvantaged stakeholders?',
+        'inequitable participation of persons of all genders in consultation and engagement process?'
+      ]
+    },
+    {
+      code: 'ESS8',
+      title: 'Accountability and Grievance Procedures',
+      questions: [
+        'exclusion of any potentially affected stakeholders, in particular marginalized groups and excluded individuals (including persons with disabilities), from fully participating in decisions that may affect them?',
+        'grievances or objections from potentially affected stakeholders?',
+        'risks of retaliation or reprisals against stakeholders who express concerns or grievances, or who seek to participate in or to obtain information on the project?'
+      ]
+    },
+    {
+      code: 'ESS9',
+      title: 'Gender Mainstreaming',
+      questions: [
+        'raised gender equality concerns by women\'s groups/leaders (e.g. during the stakeholder engagement process, grievance processes, public statements)?',
+        'adverse impacts on gender equality and/or the situation of women and girls?',
+        'reproducing discriminations against women based on gender, especially regarding participation in design and implementation or access to opportunities and benefits?',
+        'limitations on women\'s ability to use, develop and protect natural resources, taking into account different roles and positions of women and men in accessing environmental goods and services?',
+        'exacerbation of risks of gender-based violence?'
+      ]
+    },
+    {
+      code: 'ESS10',
+      title: 'Indigenous People',
+      questions: [
+        'areas where indigenous peoples are present (including project area of influence)?',
+        'activities located on lands and territories claimed by indigenous peoples?',
+        'impacts (positive or negative) to the human rights, lands, natural resources, territories, and traditional livelihoods of indigenous peoples (regardless of whether indigenous peoples possess the legal titles to such areas, whether the project is located within or outside of the lands and territories inhabited by the affected peoples, or whether the indigenous peoples are recognized as indigenous peoples by the country in question)?',
+        'the absence of culturally appropriate consultations carried out with the objective of achieving free prior and informed consent (FPIC) on matters that may affect the rights and interests, lands, resources, territories and traditional livelihoods of the indigenous peoples concerned?',
+        'adverse impacts on the development priorities of indigenous peoples as defined by them?',
+        'risks to the physical and cultural survival of indigenous peoples?',
+        'impacts on the Cultural Heritage of indigenous peoples, including through the commercialization or use of their traditional knowledge and practices? Consider, and where appropriate ensure, consistency with the answers under Standard 6 above.'
+      ]
+    }
+  ];
+
+  const handleInputChange = (essCode, questionIndex, field, value) => {
+    const key = `${essCode}-${questionIndex}`;
+    setEssfFormData(prev => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        [field]: value
+      }
+    }));
+    
+    // Also update the form data for the parent form
+    setValue(`essf_${key}_${field}`, value);
+  };
+
+  const toggleSection = (essCode) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [essCode]: !prev[essCode]
+    }));
+  };
+
+  const getQuestionKey = (essCode, questionIndex) => `${essCode}-${questionIndex}`;
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -100,185 +266,13 @@ const Step5RiskScreening = ({ register, errors, setValue, getValues, watch }) =>
         </div>
       </div>
 
-      {/* Other Risk Factors */}
-      <div className="bg-red-50 p-6 rounded-lg border border-red-200">
-        <div className="flex items-center mb-4">
-          <AlertTriangle className="h-6 w-6 text-red-600 mr-2" />
-          <h4 className="text-xl font-semibold text-gray-900">2. Other Risks to Project Implementation</h4>
-        </div>
 
-        <div className="space-y-6">
-          <div className="bg-white p-4 rounded-lg border border-red-100">
-            <p className="text-sm text-gray-700">
-              Identify and list the major risk factors that could result in the project not producing the expected outputs. 
-              Include both internal factors (e.g., technology fails to work as projected) and external factors 
-              (e.g., changes to laws or regulations).
-            </p>
-          </div>
-
-          {/* Risk Table */}
-          <div className="space-y-4">
-            <h5 className="font-medium text-gray-900">Risk Assessment Matrix</h5>
-            
-            {/* Risk 1 */}
-            <div className="bg-white p-4 rounded-lg border border-red-100">
-              <h6 className="font-medium text-gray-800 mb-3">Risk 1</h6>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="form-label">Risk/Factor Description</label>
-                  <textarea
-                    {...register('risk1Description')}
-                    className="form-input"
-                    rows="3"
-                    placeholder="Describe the risk factor"
-                  />
-                </div>
-                <div>
-                  <label className="form-label">Risk Category</label>
-                  <select {...register('risk1Category')} className="form-input">
-                    <option value="">Select category</option>
-                    <option value="Political">Political</option>
-                    <option value="Economic">Economic</option>
-                    <option value="Technological">Technological</option>
-                    <option value="Legal">Legal</option>
-                    <option value="Environmental">Environmental</option>
-                    <option value="Social">Social</option>
-                    <option value="Operational">Operational</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="form-label">Potential Impact Level</label>
-                  <select {...register('risk1Impact')} className="form-input">
-                    <option value="">Select impact level</option>
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                  </select>
-                </div>
-              </div>
-              <div className="mt-4">
-                <label className="form-label">Risk Mitigation Measures</label>
-                <textarea
-                  {...register('risk1Mitigation')}
-                  className="form-input"
-                  rows="3"
-                  placeholder="Describe how this risk will be mitigated or managed"
-                />
-              </div>
-            </div>
-
-            {/* Risk 2 */}
-            <div className="bg-white p-4 rounded-lg border border-red-100">
-              <h6 className="font-medium text-gray-800 mb-3">Risk 2</h6>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="form-label">Risk/Factor Description</label>
-                  <textarea
-                    {...register('risk2Description')}
-                    className="form-input"
-                    rows="3"
-                    placeholder="Describe the risk factor"
-                  />
-                </div>
-                <div>
-                  <label className="form-label">Risk Category</label>
-                  <select {...register('risk2Category')} className="form-input">
-                    <option value="">Select category</option>
-                    <option value="Political">Political</option>
-                    <option value="Economic">Economic</option>
-                    <option value="Technological">Technological</option>
-                    <option value="Legal">Legal</option>
-                    <option value="Environmental">Environmental</option>
-                    <option value="Social">Social</option>
-                    <option value="Operational">Operational</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="form-label">Potential Impact Level</label>
-                  <select {...register('risk2Impact')} className="form-input">
-                    <option value="">Select impact level</option>
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                  </select>
-                </div>
-              </div>
-              <div className="mt-4">
-                <label className="form-label">Risk Mitigation Measures</label>
-                <textarea
-                  {...register('risk2Mitigation')}
-                  className="form-input"
-                  rows="3"
-                  placeholder="Describe how this risk will be mitigated or managed"
-                />
-              </div>
-            </div>
-
-            {/* Risk 3 */}
-            <div className="bg-white p-4 rounded-lg border border-red-100">
-              <h6 className="font-medium text-gray-800 mb-3">Risk 3</h6>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="form-label">Risk/Factor Description</label>
-                  <textarea
-                    {...register('risk3Description')}
-                    className="form-input"
-                    rows="3"
-                    placeholder="Describe the risk factor"
-                  />
-                </div>
-                <div>
-                  <label className="form-label">Risk Category</label>
-                  <select {...register('risk3Category')} className="form-input">
-                    <option value="">Select category</option>
-                    <option value="Political">Political</option>
-                    <option value="Economic">Economic</option>
-                    <option value="Technological">Technological</option>
-                    <option value="Legal">Legal</option>
-                    <option value="Environmental">Environmental</option>
-                    <option value="Social">Social</option>
-                    <option value="Operational">Operational</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="form-label">Potential Impact Level</label>
-                  <select {...register('risk3Impact')} className="form-input">
-                    <option value="">Select impact level</option>
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                  </select>
-                </div>
-              </div>
-              <div className="mt-4">
-                <label className="form-label">Risk Mitigation Measures</label>
-                <textarea
-                  {...register('risk3Mitigation')}
-                  className="form-input"
-                  rows="3"
-                  placeholder="Describe how this risk will be mitigated or managed"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label className="form-label">Additional Risks and Mitigation Strategies</label>
-            <textarea
-              {...register('additionalRisks')}
-              className="form-input"
-              rows="4"
-              placeholder="List any additional risks not covered above and their mitigation strategies"
-            />
-          </div>
-        </div>
-      </div>
 
       {/* Environmental Clearance */}
       <div className="bg-green-50 p-6 rounded-lg border border-green-200">
         <div className="flex items-center mb-4">
           <Shield className="h-6 w-6 text-green-600 mr-2" />
-          <h4 className="text-xl font-semibold text-gray-900">3. Environmental Clearance</h4>
+          <h4 className="text-xl font-semibold text-gray-900">2. Environmental Clearance</h4>
         </div>
 
         <div className="space-y-4">
@@ -327,6 +321,188 @@ const Step5RiskScreening = ({ register, errors, setValue, getValues, watch }) =>
         </div>
       </div>
 
+      {/* Belize Fund ESSF - Environmental and Social Safeguards Framework */}
+      <div className="bg-purple-50 p-6 rounded-lg border border-purple-200">
+        <div className="flex items-center mb-6">
+          <FileText className="h-6 w-6 text-purple-600 mr-2" />
+          <div>
+            <h4 className="text-xl font-semibold text-gray-900">3. Belize Fund ESSF - Environmental and Social Safeguards Framework Risk Assessment</h4>
+            <p className="text-sm text-gray-600">Complete the comprehensive risk assessment for environmental and social safeguards</p>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          {/* Exclusion List Check */}
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <h5 className="text-lg font-semibold text-red-800 mb-3">Pre-Assessment Check</h5>
+            <div className="flex items-center space-x-4">
+              <label className="text-red-700 font-medium">
+                Is any activity or sub-activity of this project proposal on the Belize Fund exclusion list?
+              </label>
+              <div className="flex space-x-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="exclusion-check"
+                    value="yes"
+                    className="mr-2"
+                    onChange={(e) => handleInputChange('exclusion', 'check', 'response', e.target.value)}
+                  />
+                  Yes
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="exclusion-check"
+                    value="no"
+                    className="mr-2"
+                    onChange={(e) => handleInputChange('exclusion', 'check', 'response', e.target.value)}
+                  />
+                  No
+                </label>
+              </div>
+            </div>
+            <p className="text-sm text-red-600 mt-2">*If yes, stop here and consult with Belize Fund staff.</p>
+          </div>
+
+          {/* ESS Sections */}
+          {essData.map((ess) => (
+            <div key={ess.code} className="border border-gray-200 rounded-lg">
+              <button
+                type="button"
+                onClick={() => toggleSection(ess.code)}
+                className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-t-lg"
+              >
+                <div className="text-left">
+                  <h5 className="text-lg font-semibold text-gray-900">{ess.code}</h5>
+                  <p className="text-sm text-gray-600">{ess.title}</p>
+                </div>
+                <ChevronDown
+                  className={`w-5 h-5 text-gray-500 transform transition-transform ${
+                    expandedSections[ess.code] ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+
+              {expandedSections[ess.code] && (
+                <div className="p-4 border-t border-gray-200">
+                  <p className="text-sm text-gray-600 mb-4 font-medium">
+                    Would the project potentially involve or lead to:
+                  </p>
+                  
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="bg-gray-50">
+                          <th className="border border-gray-300 p-3 text-left text-sm font-medium text-gray-700 w-1/2">
+                            Guiding Questions on Risk and Impacts
+                          </th>
+                          <th className="border border-gray-300 p-3 text-center text-sm font-medium text-gray-700 w-20">
+                            Yes/No
+                          </th>
+                          <th className="border border-gray-300 p-3 text-center text-sm font-medium text-gray-700 w-32">
+                            Impact (1-5)
+                          </th>
+                          <th className="border border-gray-300 p-3 text-center text-sm font-medium text-gray-700 w-32">
+                            Likelihood (1-5)
+                          </th>
+                          <th className="border border-gray-300 p-3 text-left text-sm font-medium text-gray-700 w-40">
+                            Note
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {ess.questions.map((question, index) => {
+                          const questionKey = getQuestionKey(ess.code, index);
+                          return (
+                            <tr key={index} className="hover:bg-gray-50">
+                              <td className="border border-gray-300 p-3 text-sm text-gray-700">
+                                <span className="font-medium text-blue-600">{ess.code}-{index + 1}</span>
+                                <span className="ml-2">{question}</span>
+                              </td>
+                              <td className="border border-gray-300 p-3 text-center">
+                                <div className="flex justify-center space-x-2">
+                                  <label className="flex items-center">
+                                    <input
+                                      type="radio"
+                                      name={`${questionKey}-response`}
+                                      value="yes"
+                                      className="mr-1"
+                                      onChange={(e) => handleInputChange(ess.code, index, 'response', e.target.value)}
+                                    />
+                                    <span className="text-xs">Yes</span>
+                                  </label>
+                                  <label className="flex items-center">
+                                    <input
+                                      type="radio"
+                                      name={`${questionKey}-response`}
+                                      value="no"
+                                      className="mr-1"
+                                      onChange={(e) => handleInputChange(ess.code, index, 'response', e.target.value)}
+                                    />
+                                    <span className="text-xs">No</span>
+                                  </label>
+                                </div>
+                              </td>
+                              <td className="border border-gray-300 p-3">
+                                <select
+                                  className="w-full p-1 border border-gray-300 rounded text-sm"
+                                  onChange={(e) => handleInputChange(ess.code, index, 'impact', e.target.value)}
+                                  value={essfFormData[questionKey]?.impact || ''}
+                                >
+                                  {riskOptions.map(option => (
+                                    <option key={option.value} value={option.value}>
+                                      {option.label}
+                                    </option>
+                                  ))}
+                                </select>
+                              </td>
+                              <td className="border border-gray-300 p-3">
+                                <select
+                                  className="w-full p-1 border border-gray-300 rounded text-sm"
+                                  onChange={(e) => handleInputChange(ess.code, index, 'likelihood', e.target.value)}
+                                  value={essfFormData[questionKey]?.likelihood || ''}
+                                >
+                                  {riskOptions.map(option => (
+                                    <option key={option.value} value={option.value}>
+                                      {option.label}
+                                    </option>
+                                  ))}
+                                </select>
+                              </td>
+                              <td className="border border-gray-300 p-3">
+                                <textarea
+                                  className="w-full p-1 border border-gray-300 rounded text-sm resize-none"
+                                  rows="2"
+                                  placeholder="Add notes..."
+                                  onChange={(e) => handleInputChange(ess.code, index, 'note', e.target.value)}
+                                  value={essfFormData[questionKey]?.note || ''}
+                                />
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+
+          <div className="flex justify-end pt-4 border-t border-gray-200">
+            <button
+              type="button"
+              onClick={() => console.log('ESSF Form Data:', essfFormData)}
+              className="flex items-center px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              Save ESSF Assessment
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Required Documents Reminder */}
       <div className="bg-yellow-50 p-6 rounded-lg border border-yellow-200">
         <h5 className="font-medium text-gray-900 mb-3">Required Environmental and Social Documents</h5>
@@ -336,6 +512,7 @@ const Step5RiskScreening = ({ register, errors, setValue, getValues, watch }) =>
           <li>Gender Action Plan (GAP)</li>
           <li>Stakeholder Engagement Plan (SEP)</li>
           <li>Environmental Clearance letter (if applicable)</li>
+          <li>Belize Fund ESSF Assessment Results</li>
         </ul>
         <p className="text-sm text-gray-600 mt-2">
           These documents will be uploaded in the final step of the application.
