@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { BarChart3, Target, Clock } from 'lucide-react'
+import PrefilledField from '../PrefilledField'
 
-const Step6MonitoringEvaluation = ({ register, errors, setValue, getValues, watch }) => {
+const Step6MonitoringEvaluation = ({ register, errors, setValue, getValues, watch, userData }) => {
   const [meWordCount, setMeWordCount] = useState(0)
 
   const countWords = (text) => {

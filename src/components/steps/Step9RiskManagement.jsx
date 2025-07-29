@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Users, Shield, AlertTriangle, FileText } from 'lucide-react'
+import PrefilledField from '../PrefilledField'
 
-const Step9RiskManagement = ({ register, errors, setValue, getValues, watch }) => {
+const Step9RiskManagement = ({ register, errors, setValue, getValues, watch, userData }) => {
   const [riskFactors, setRiskFactors] = useState([
     { risk: '', category: '', impact: '', mitigation: '' }
   ])

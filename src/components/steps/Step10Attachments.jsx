@@ -1,6 +1,7 @@
 import { Upload, FileText, CheckCircle2, Video, AlertTriangle } from 'lucide-react'
+import PrefilledField from '../PrefilledField'
 
-const Step10Attachments = ({ register, errors, setValue, getValues, watch }) => {
+const Step10Attachments = ({ register, errors, setValue, getValues, watch, userData }) => {
   const generalDocs = [
     { name: 'Letters of support from relevant stakeholders/Partners', required: true },
     { name: 'Commitment letters from contributing organization(s)', required: true },

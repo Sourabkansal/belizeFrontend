@@ -314,6 +314,7 @@ const CommunityProposalForm = () => {
                   setValue={setValue}
                   getValues={getValues}
                   watch={watch}
+                  userData={userData}
                 />
               </div>
             )}

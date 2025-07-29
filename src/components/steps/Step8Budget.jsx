@@ -1,6 +1,7 @@
 import { DollarSign, Calculator, AlertCircle, FileSpreadsheet } from 'lucide-react'
+import PrefilledField from '../PrefilledField'
 
-const Step8Budget = ({ register, errors, setValue, getValues, watch }) => {
+const Step8Budget = ({ register, errors, setValue, getValues, watch, userData }) => {
   const calculateTotal = (items) => {
     return items.reduce((total, item) => total + (parseFloat(item) || 0), 0)
   }
@@ -59,34 +60,54 @@ const Step8Budget = ({ register, errors, setValue, getValues, watch }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="form-label">Total Amount Requested from Belize Fund Management (BZD) *</label>
-            <input
-              type="number"
-              {...register('totalBudgetRequested')}
-              className="form-input text-lg font-semibold"
-              placeholder="0.00"
-              step="0.01"
-              min="0"
-            />
-            {errors.totalBudgetRequested && (
-              <p className="form-error">{errors.totalBudgetRequested.message}</p>
+            {userData ? (
+              <PrefilledField
+                label="Total Amount Requested from Belize Fund Management (BZD) *"
+                value={userData.totalBudget}
+                fieldName="Total_Budget from Concept Paper"
+              />
+            ) : (
+              <>
+                <label className="form-label">Total Amount Requested from Belize Fund Management (BZD) *</label>
+                <input
+                  type="number"
+                  {...register('totalBudgetRequested')}
+                  className="form-input text-lg font-semibold"
+                  placeholder="0.00"
+                  step="0.01"
+                  min="0"
+                />
+                {errors.totalBudgetRequested && (
+                  <p className="form-error">{errors.totalBudgetRequested.message}</p>
+                )}
+              </>
             )}
           </div>
 
           <div>
-            <label className="form-label">Project Duration (Months)</label>
-            <input
-              type="number"
-              {...register('budgetDuration')}
-              className="form-input"
-              placeholder="Enter duration"
-              min="1"
-            />
-            <p className="text-sm text-gray-500 mt-1">
-              Cost per month: BZD {watchedValues.totalBudgetRequested && watchedValues.budgetDuration 
-                ? (watchedValues.totalBudgetRequested / watchedValues.budgetDuration).toFixed(2) 
-                : '0.00'}
-            </p>
+            {userData ? (
+              <PrefilledField
+                label="Project Duration (Months)"
+                value={userData.durationMonths}
+                fieldName="Duration_Months from Concept Paper"
+              />
+            ) : (
+              <>
+                <label className="form-label">Project Duration (Months)</label>
+                <input
+                  type="number"
+                  {...register('budgetDuration')}
+                  className="form-input"
+                  placeholder="Enter duration"
+                  min="1"
+                />
+                <p className="text-sm text-gray-500 mt-1">
+                  Cost per month: BZD {watchedValues.totalBudgetRequested && watchedValues.budgetDuration 
+                    ? (watchedValues.totalBudgetRequested / watchedValues.budgetDuration).toFixed(2) 
+                    : '0.00'}
+                </p>
+              </>
+            )}
           </div>
         </div>
 
@@ -392,6 +413,76 @@ const Step8Budget = ({ register, errors, setValue, getValues, watch }) => {
               />
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Co-Financing Section */}
+      <div className="bg-purple-50 p-6 rounded-lg border border-purple-200">
+        <div className="flex items-center mb-4">
+          <DollarSign className="h-6 w-6 text-purple-600 mr-2" />
+          <h4 className="text-xl font-semibold text-gray-900">Co-Financing Information</h4>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            {userData ? (
+              <PrefilledField
+                label="Total Co-Financing Amount (BZD)"
+                value={userData.totalCoFinancing}
+                fieldName="Total_Co_Financing from Concept Paper"
+              />
+            ) : (
+              <>
+                <label className="form-label">Total Co-Financing Amount (BZD)</label>
+                <input
+                  type="number"
+                  {...register('totalCoFinancing')}
+                  className="form-input"
+                  placeholder="0.00"
+                  step="0.01"
+                  min="0"
+                />
+                {errors.totalCoFinancing && (
+                  <p className="form-error">{errors.totalCoFinancing.message}</p>
+                )}
+              </>
+            )}
+          </div>
+
+          <div>
+            {userData ? (
+              <PrefilledField
+                label="Total Project Cost (BZD)"
+                value={userData.totalProjectCost}
+                fieldName="Total_Project_Cost from Concept Paper"
+              />
+            ) : (
+              <>
+                <label className="form-label">Total Project Cost (BZD)</label>
+                <input
+                  type="number"
+                  {...register('totalProjectCost')}
+                  className="form-input"
+                  placeholder="0.00"
+                  step="0.01"
+                  min="0"
+                />
+                {errors.totalProjectCost && (
+                  <p className="form-error">{errors.totalProjectCost.message}</p>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-4 p-4 bg-white rounded-lg border border-purple-100">
+          <h5 className="font-medium text-gray-900 mb-2">Co-Financing Requirements:</h5>
+          <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
+            <li>Community small grants (up to BZD $75,000): No co-financing required</li>
+            <li>Medium grants (BZD $75,000 - $150,000): 10-25% co-financing required</li>
+            <li>Large grants (above BZD $150,000): 25-50% co-financing required</li>
+            <li>Private sector applicants: 1:1 co-financing required</li>
+          </ul>
         </div>
       </div>
 

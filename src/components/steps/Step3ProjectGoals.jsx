@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Target, List, AlertCircle } from 'lucide-react'
+import PrefilledField from '../PrefilledField'
 
-const Step3ProjectGoals = ({ register, errors, setValue, getValues, watch }) => {
+const Step3ProjectGoals = ({ register, errors, setValue, getValues, watch, userData }) => {
   const [goalWordCount, setGoalWordCount] = useState(0)
 
   const countWords = (text) => {
@@ -82,15 +83,25 @@ const Step3ProjectGoals = ({ register, errors, setValue, getValues, watch }) => 
         <div className="space-y-6">
           {/* Project Goal */}
           <div>
-            <label className="form-label">Goal:</label>
-            <textarea
-              {...register('logicalFrameworkGoal')}
-              className="form-input"
-              rows="3"
-              placeholder="State the overall goal your project aims to achieve"
-            />
-            {errors.logicalFrameworkGoal && (
-              <p className="form-error">{errors.logicalFrameworkGoal.message}</p>
+            {userData ? (
+              <PrefilledField
+                label="Goal:"
+                value={userData.goal}
+                fieldName="Goal from Concept Paper"
+              />
+            ) : (
+              <>
+                <label className="form-label">Goal:</label>
+                <textarea
+                  {...register('logicalFrameworkGoal')}
+                  className="form-input"
+                  rows="3"
+                  placeholder="State the overall goal your project aims to achieve"
+                />
+                {errors.logicalFrameworkGoal && (
+                  <p className="form-error">{errors.logicalFrameworkGoal.message}</p>
+                )}
+              </>
             )}
           </div>
 

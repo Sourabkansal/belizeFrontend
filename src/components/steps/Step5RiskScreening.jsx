@@ -1,7 +1,7 @@
 import { Shield, AlertTriangle, FileCheck, ChevronDown, Save, FileText } from 'lucide-react'
 import { useState } from 'react'
 
-const Step5RiskScreening = ({ register, errors, setValue, getValues, watch }) => {
+const Step5RiskScreening = ({ register, errors, setValue, getValues, watch, userData }) => {
   const [essfFormData, setEssfFormData] = useState({});
   const [expandedSections, setExpandedSections] = useState({});
 

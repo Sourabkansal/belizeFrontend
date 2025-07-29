@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Recycle, TrendingUp, Users } from 'lucide-react'
+import PrefilledField from '../PrefilledField'
 
-const Step7Sustainability = ({ register, errors, setValue, getValues, watch }) => {
+const Step7Sustainability = ({ register, errors, setValue, getValues, watch, userData }) => {
   const [sustainabilityWordCount, setSustainabilityWordCount] = useState(0)
 
   const countWords = (text) => {
