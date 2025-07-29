@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
 
+// Environment-based API configuration
+const API_BASE_URL = import.meta.env.PROD 
+  ? 'https://belizebackend.onrender.com/api'  // Production
+  : '/api';  // Development (uses Vite proxy)
+
 const ZohoReportFetcher = () => {
   const [status, setStatus] = useState('idle');
 
@@ -11,7 +16,7 @@ const ZohoReportFetcher = () => {
         
         // First test the simple route
         console.log('🧪 Testing simple route...');
-        const testResponse = await fetch('/api/zoho/reports/test');
+        const testResponse = await fetch(`${API_BASE_URL}/zoho/reports/test`);
         if (testResponse.ok) {
           const testResult = await testResponse.json();
           console.log('✅ Simple route test successful:', testResult);
@@ -19,7 +24,7 @@ const ZohoReportFetcher = () => {
           console.error('❌ Simple route test failed:', testResponse.status);
         }
         
-        const response = await fetch('/api/zoho/reports/gap-concept-papers');
+        const response = await fetch(`${API_BASE_URL}/zoho/reports/gap-concept-papers`);
         
         if (!response.ok) {
           console.error('❌ HTTP Error:', response.status, response.statusText);

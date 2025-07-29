@@ -1,3 +1,8 @@
+// Environment-based API configuration
+const API_BASE_URL = import.meta.env.PROD 
+  ? 'https://belizebackend.onrender.com/api'  // Production
+  : '/api';  // Development (uses Vite proxy)
+
 class UserDataService {
   constructor() {
     this.userEmail = 'Sourabkansal56@gmail.com'; // Hardcoded for now
@@ -7,7 +12,7 @@ class UserDataService {
     try {
       console.log('🔍 Fetching concept data for user:', this.userEmail);
       
-      const response = await fetch('/api/zoho/reports/gap-concept-papers');
+      const response = await fetch(`${API_BASE_URL}/zoho/reports/gap-concept-papers`);
       
       if (!response.ok) {
         console.error('❌ Failed to fetch concept data:', response.status);
