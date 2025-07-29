@@ -6,11 +6,25 @@ const API_BASE_URL = import.meta.env.PROD
 class UserDataService {
   constructor() {
     this.userEmail = 'Sourabkansal56@gmail.com'; // Hardcoded for now
+    this.apiCallCount = 0; // Track API calls
+    this.cachedData = null; // Cache the data
+    this.lastFetchTime = 0; // Track last fetch time
   }
 
   async fetchUserConceptData() {
     try {
-      console.log('🔍 Fetching concept data for user:', this.userEmail);
+      this.apiCallCount++;
+      console.log(`📞 API Call #${this.apiCallCount} - Fetching concept data for user:`, this.userEmail);
+      
+      // Dispatch API call event for counter
+      window.dispatchEvent(new CustomEvent('apiCall'));
+      
+      // Check if we have cached data and it's recent (within 5 minutes)
+      const now = Date.now();
+      if (this.cachedData && (now - this.lastFetchTime) < 5 * 60 * 1000) {
+        console.log('📦 Using cached data (fetched within 5 minutes)');
+        return this.cachedData;
+      }
       
       const response = await fetch(`${API_BASE_URL}/zoho/reports/gap-concept-papers`);
       
@@ -34,13 +48,10 @@ class UserDataService {
       );
       
       if (userRecord) {
-        console.log('✅ Found matching record for user:', userRecord);
-        console.log('📋 Available fields in record:', Object.keys(userRecord));
-        console.log('📅 Date of Incorporation raw value:', userRecord.Date_of_incorporation_of_Organization);
-        console.log('🎯 Project_Theme value:', userRecord.Project_Theme);
-        console.log('🏆 Award_Category1 value:', userRecord.Award_Category1);
+        console.log('✅ Found matching record for user');
         
-        return {
+        // Cache the processed data
+        this.cachedData = {
           contactName: userRecord.Contact_Name || '',
           projectTitle: userRecord.Project_Title || '',
           email: userRecord.Email || '',
@@ -64,6 +75,9 @@ class UserDataService {
           contactPosition: userRecord.Position || '',
           contactTelephone: userRecord.Telephone || ''
         };
+        
+        this.lastFetchTime = now;
+        return this.cachedData;
       } else {
         console.log('⚠️ No matching record found for user email:', this.userEmail);
         return null;
@@ -91,25 +105,35 @@ class UserDataService {
     
     console.log('📅 Formatting date:', zohoDate);
     
-    // Zoho date format is typically "22-Jul-2025"
-    // We need to convert it to "2025-07-22" for HTML date input
+    // Zoho date format is "09-Jul-2025" or "06-Jan-2015"
+    // We need to convert it to "2025-07-09" for HTML date input
     
     try {
-      // Parse the Zoho date format
-      const date = new Date(zohoDate);
+      // Parse the Zoho date format: "DD-MMM-YYYY"
+      const dateMatch = zohoDate.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/);
       
-      // Check if the date is valid
-      if (isNaN(date.getTime())) {
-        console.warn('⚠️ Invalid date format:', zohoDate);
+      if (!dateMatch) {
+        console.warn('⚠️ Invalid Zoho date format:', zohoDate);
+        return '';
+      }
+      
+      const [, day, monthStr, year] = dateMatch;
+      
+      // Map month abbreviations to numbers
+      const monthMap = {
+        'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
+        'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
+        'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+      };
+      
+      const month = monthMap[monthStr];
+      if (!month) {
+        console.warn('⚠️ Invalid month abbreviation:', monthStr);
         return '';
       }
       
       // Format to YYYY-MM-DD
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      
-      const formattedDate = `${year}-${month}-${day}`;
+      const formattedDate = `${year}-${month}-${day.padStart(2, '0')}`;
       console.log('✅ Formatted date:', formattedDate);
       
       return formattedDate;

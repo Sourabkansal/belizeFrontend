@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { userDataService } from '../services/userDataService';
 
 const UserDataContext = createContext();
@@ -15,6 +15,7 @@ export const UserDataProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const hasInitialized = useRef(false);
 
   const fetchUserData = async () => {
     try {
@@ -25,7 +26,7 @@ export const UserDataProvider = ({ children }) => {
       
       if (data) {
         setUserData(data);
-        console.log('✅ User data loaded successfully:', data);
+        console.log('✅ User data loaded successfully');
       } else {
         console.log('⚠️ No user data found');
         setUserData(null);
@@ -40,7 +41,11 @@ export const UserDataProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchUserData();
+    // Only fetch once when component mounts
+    if (!hasInitialized.current) {
+      hasInitialized.current = true;
+      fetchUserData();
+    }
   }, []);
 
   const refreshUserData = () => {

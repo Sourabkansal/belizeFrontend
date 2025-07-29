@@ -111,7 +111,7 @@ const CommunityProposalForm = () => {
   // Prefill form with user data when available
   useEffect(() => {
     if (userData && !userDataLoading) {
-      console.log('🔄 Prefilling Community Proposal form with user data:', userData);
+      console.log('🔄 Prefilling Community Proposal form with user data');
       
       // Prefill relevant fields
       setValue('contactName', userData.contactName);

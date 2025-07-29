@@ -5,6 +5,7 @@ import ConceptForm from './components/ConceptForm'
 import Navigation from './components/Navigation'
 import CommunityProposalForm from './components/CommunityProposalForm'
 import ZohoReportFetcher from './components/ZohoReportFetcher'
+import ApiCallCounter from './components/ApiCallCounter'
 import { UserDataProvider } from './context/UserDataContext'
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
     <Router>
       <div className="App">
           <ZohoReportFetcher />
+          <ApiCallCounter />
         <Navigation />
         <main className="min-h-screen bg-gray-50 py-8">
           <Routes>
