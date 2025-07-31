@@ -83,14 +83,6 @@ const Step3ProjectGoals = ({ register, errors, setValue, getValues, watch, userD
         <div className="space-y-6">
           {/* Project Goal */}
           <div>
-            {userData ? (
-              <PrefilledField
-                label="Goal:"
-                value={userData.goal}
-                fieldName="Goal from Concept Paper"
-              />
-            ) : (
-              <>
             <label className="form-label">Goal:</label>
             <textarea
               {...register('logicalFrameworkGoal')}
@@ -100,8 +92,6 @@ const Step3ProjectGoals = ({ register, errors, setValue, getValues, watch, userD
             />
             {errors.logicalFrameworkGoal && (
               <p className="form-error">{errors.logicalFrameworkGoal.message}</p>
-                )}
-              </>
             )}
           </div>
 
@@ -141,7 +131,7 @@ const Step3ProjectGoals = ({ register, errors, setValue, getValues, watch, userD
                       />
                     </td>
                     <td className="border border-gray-300 px-3 py-2">
-                      <textarea
+                          <textarea
                         {...register('outcome1Baseline')}
                         className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
                         rows="3"
@@ -149,7 +139,7 @@ const Step3ProjectGoals = ({ register, errors, setValue, getValues, watch, userD
                       />
                     </td>
                     <td className="border border-gray-300 px-3 py-2">
-                      <textarea
+                          <textarea
                         {...register('outcome1Targets')}
                         className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
                         rows="3"
@@ -157,7 +147,7 @@ const Step3ProjectGoals = ({ register, errors, setValue, getValues, watch, userD
                       />
                     </td>
                     <td className="border border-gray-300 px-3 py-2">
-                      <textarea
+                          <textarea
                         {...register('outcome1Verification')}
                         className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
                         rows="3"
@@ -165,7 +155,7 @@ const Step3ProjectGoals = ({ register, errors, setValue, getValues, watch, userD
                       />
                     </td>
                     <td className="border border-gray-300 px-3 py-2">
-                      <textarea
+                          <textarea
                         {...register('outcome1ResponsibleParty')}
                         className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
                         rows="3"
@@ -175,8 +165,8 @@ const Step3ProjectGoals = ({ register, errors, setValue, getValues, watch, userD
                   </tr>
                 </tbody>
               </table>
-            </div>
-          </div>
+                        </div>
+                      </div>
 
           {/* OUTPUTS TABLE */}
           <div className="bg-white p-4 rounded-lg border border-green-100">
@@ -450,7 +440,7 @@ const Step3ProjectGoals = ({ register, errors, setValue, getValues, watch, userD
                       />
                     </td>
                     <td className="border border-gray-300 px-3 py-2">
-                      <textarea
+                          <textarea
                         {...register('output5Baseline')}
                         className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
                         rows="3"
@@ -458,7 +448,7 @@ const Step3ProjectGoals = ({ register, errors, setValue, getValues, watch, userD
                       />
                     </td>
                     <td className="border border-gray-300 px-3 py-2">
-                      <textarea
+                          <textarea
                         {...register('output5Targets')}
                         className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
                         rows="3"
@@ -466,7 +456,7 @@ const Step3ProjectGoals = ({ register, errors, setValue, getValues, watch, userD
                       />
                     </td>
                     <td className="border border-gray-300 px-3 py-2">
-                      <textarea
+                          <textarea
                         {...register('output5Verification')}
                         className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
                         rows="3"
@@ -474,7 +464,7 @@ const Step3ProjectGoals = ({ register, errors, setValue, getValues, watch, userD
                       />
                     </td>
                     <td className="border border-gray-300 px-3 py-2">
-                      <textarea
+                          <textarea
                         {...register('output5ResponsibleParty')}
                         className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
                         rows="3"
@@ -484,8 +474,8 @@ const Step3ProjectGoals = ({ register, errors, setValue, getValues, watch, userD
                   </tr>
                 </tbody>
               </table>
-            </div>
-          </div>
+                        </div>
+                      </div>
 
           {/* ASSUMPTIONS TABLE */}
           <div className="bg-white p-4 rounded-lg border border-green-100">
