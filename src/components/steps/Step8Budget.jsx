@@ -68,17 +68,17 @@ const Step8Budget = ({ register, errors, setValue, getValues, watch, userData })
               />
             ) : (
               <>
-                <label className="form-label">Total Amount Requested from Belize Fund Management (BZD) *</label>
-                <input
-                  type="number"
-                  {...register('totalBudgetRequested')}
-                  className="form-input text-lg font-semibold"
-                  placeholder="0.00"
-                  step="0.01"
-                  min="0"
-                />
-                {errors.totalBudgetRequested && (
-                  <p className="form-error">{errors.totalBudgetRequested.message}</p>
+            <label className="form-label">Total Amount Requested from Belize Fund Management (BZD) *</label>
+            <input
+              type="number"
+              {...register('totalBudgetRequested')}
+              className="form-input text-lg font-semibold"
+              placeholder="0.00"
+              step="0.01"
+              min="0"
+            />
+            {errors.totalBudgetRequested && (
+              <p className="form-error">{errors.totalBudgetRequested.message}</p>
                 )}
               </>
             )}
@@ -93,19 +93,19 @@ const Step8Budget = ({ register, errors, setValue, getValues, watch, userData })
               />
             ) : (
               <>
-                <label className="form-label">Project Duration (Months)</label>
-                <input
-                  type="number"
-                  {...register('budgetDuration')}
-                  className="form-input"
-                  placeholder="Enter duration"
-                  min="1"
-                />
-                <p className="text-sm text-gray-500 mt-1">
-                  Cost per month: BZD {watchedValues.totalBudgetRequested && watchedValues.budgetDuration 
-                    ? (watchedValues.totalBudgetRequested / watchedValues.budgetDuration).toFixed(2) 
-                    : '0.00'}
-                </p>
+            <label className="form-label">Project Duration (Months)</label>
+            <input
+              type="number"
+              {...register('budgetDuration')}
+              className="form-input"
+              placeholder="Enter duration"
+              min="1"
+            />
+            <p className="text-sm text-gray-500 mt-1">
+              Cost per month: BZD {watchedValues.totalBudgetRequested && watchedValues.budgetDuration 
+                ? (watchedValues.totalBudgetRequested / watchedValues.budgetDuration).toFixed(2) 
+                : '0.00'}
+            </p>
               </>
             )}
           </div>

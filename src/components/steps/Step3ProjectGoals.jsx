@@ -91,243 +91,481 @@ const Step3ProjectGoals = ({ register, errors, setValue, getValues, watch, userD
               />
             ) : (
               <>
-                <label className="form-label">Goal:</label>
-                <textarea
-                  {...register('logicalFrameworkGoal')}
-                  className="form-input"
-                  rows="3"
-                  placeholder="State the overall goal your project aims to achieve"
-                />
-                {errors.logicalFrameworkGoal && (
-                  <p className="form-error">{errors.logicalFrameworkGoal.message}</p>
+            <label className="form-label">Goal:</label>
+            <textarea
+              {...register('logicalFrameworkGoal')}
+              className="form-input"
+              rows="3"
+              placeholder="State the overall goal your project aims to achieve"
+            />
+            {errors.logicalFrameworkGoal && (
+              <p className="form-error">{errors.logicalFrameworkGoal.message}</p>
                 )}
               </>
             )}
           </div>
 
-          {/* Logical Framework Table Structure */}
+          {/* OUTCOMES TABLE */}
           <div className="bg-white p-4 rounded-lg border border-green-100">
+            <h5 className="text-lg font-semibold text-gray-900 mb-3 bg-teal-100 p-2 rounded">OUTCOMES</h5>
             <div className="overflow-x-auto">
-              <table className="w-full border-collapse border border-gray-300">
+              <table className="w-full border-collapse border border-gray-300 text-sm">
                 <thead>
-                  <tr className="bg-gray-50">
-                    <th className="border border-gray-300 px-3 py-2 text-left font-medium">Intervention Logic</th>
-                    <th className="border border-gray-300 px-3 py-2 text-left font-medium">Indicators (SMART)</th>
-                    <th className="border border-gray-300 px-3 py-2 text-left font-medium">Means of Verification</th>
-                    <th className="border border-gray-300 px-3 py-2 text-left font-medium">Assumptions</th>
+                  <tr className="bg-teal-600 text-white">
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Interventions</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Statement</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Indicators</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Baselines</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Targets</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Means of Verification</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Responsible Party (Lead Agency)</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {/* Objective 1 Row */}
                   <tr>
-                    <td className="border border-gray-300 px-3 py-2 bg-blue-50">
-                      <div className="space-y-2">
-                        <div>
-                          <label className="text-sm font-medium">Objective 1:</label>
-                          <textarea
-                            {...register('objective1')}
-                            className="w-full p-1 text-sm border border-gray-200 rounded"
-                            rows="2"
-                            placeholder="Insert Objective 1"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium">Outcome:</label>
-                          <textarea
-                            {...register('outcome1')}
-                            className="w-full p-1 text-sm border border-gray-200 rounded"
-                            rows="2"
-                            placeholder="Expected outcome"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium">Output 1.1:</label>
-                          <textarea
-                            {...register('output1_1')}
-                            className="w-full p-1 text-sm border border-gray-200 rounded"
-                            rows="2"
-                            placeholder="Output 1.1"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium">Output 1.2:</label>
-                          <textarea
-                            {...register('output1_2')}
-                            className="w-full p-1 text-sm border border-gray-200 rounded"
-                            rows="2"
-                            placeholder="Output 1.2"
-                          />
-                        </div>
-                      </div>
-                    </td>
+                    <td className="border border-gray-300 px-3 py-2 font-semibold bg-teal-100">OUTCOME 1</td>
                     <td className="border border-gray-300 px-3 py-2">
                       <textarea
-                        {...register('indicators1')}
-                        className="w-full p-1 text-sm border border-gray-200 rounded"
-                        rows="8"
-                        placeholder="SMART indicators for Objective 1"
+                        {...register('outcome1Statement')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
                       />
                     </td>
                     <td className="border border-gray-300 px-3 py-2">
                       <textarea
-                        {...register('verification1')}
-                        className="w-full p-1 text-sm border border-gray-200 rounded"
-                        rows="8"
-                        placeholder="Means of verification for Objective 1"
+                        {...register('outcome1Indicators')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
                       />
                     </td>
                     <td className="border border-gray-300 px-3 py-2">
                       <textarea
-                        {...register('assumptions1')}
-                        className="w-full p-1 text-sm border border-gray-200 rounded"
-                        rows="8"
-                        placeholder="Assumptions for Objective 1"
-                      />
-                    </td>
-                  </tr>
-
-                  {/* Objective 2 Row */}
-                  <tr>
-                    <td className="border border-gray-300 px-3 py-2 bg-blue-50">
-                      <div className="space-y-2">
-                        <div>
-                          <label className="text-sm font-medium">Objective 2:</label>
-                          <textarea
-                            {...register('objective2')}
-                            className="w-full p-1 text-sm border border-gray-200 rounded"
-                            rows="2"
-                            placeholder="Insert Objective 2"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium">Outcome:</label>
-                          <textarea
-                            {...register('outcome2')}
-                            className="w-full p-1 text-sm border border-gray-200 rounded"
-                            rows="2"
-                            placeholder="Expected outcome"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium">Output 2.1:</label>
-                          <textarea
-                            {...register('output2_1')}
-                            className="w-full p-1 text-sm border border-gray-200 rounded"
-                            rows="2"
-                            placeholder="Output 2.1"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium">Output 2.2:</label>
-                          <textarea
-                            {...register('output2_2')}
-                            className="w-full p-1 text-sm border border-gray-200 rounded"
-                            rows="2"
-                            placeholder="Output 2.2"
-                          />
-                        </div>
-                      </div>
-                    </td>
-                    <td className="border border-gray-300 px-3 py-2">
-                      <textarea
-                        {...register('indicators2')}
-                        className="w-full p-1 text-sm border border-gray-200 rounded"
-                        rows="8"
-                        placeholder="SMART indicators for Objective 2"
+                        {...register('outcome1Baseline')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
                       />
                     </td>
                     <td className="border border-gray-300 px-3 py-2">
                       <textarea
-                        {...register('verification2')}
-                        className="w-full p-1 text-sm border border-gray-200 rounded"
-                        rows="8"
-                        placeholder="Means of verification for Objective 2"
+                        {...register('outcome1Targets')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
                       />
                     </td>
                     <td className="border border-gray-300 px-3 py-2">
                       <textarea
-                        {...register('assumptions2')}
-                        className="w-full p-1 text-sm border border-gray-200 rounded"
-                        rows="8"
-                        placeholder="Assumptions for Objective 2"
-                      />
-                    </td>
-                  </tr>
-
-                  {/* Objective 3 Row */}
-                  <tr>
-                    <td className="border border-gray-300 px-3 py-2 bg-blue-50">
-                      <div className="space-y-2">
-                        <div>
-                          <label className="text-sm font-medium">Objective 3:</label>
-                          <textarea
-                            {...register('objective3')}
-                            className="w-full p-1 text-sm border border-gray-200 rounded"
-                            rows="2"
-                            placeholder="Insert Objective 3"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium">Outcome:</label>
-                          <textarea
-                            {...register('outcome3')}
-                            className="w-full p-1 text-sm border border-gray-200 rounded"
-                            rows="2"
-                            placeholder="Expected outcome"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium">Output 3.1:</label>
-                          <textarea
-                            {...register('output3_1')}
-                            className="w-full p-1 text-sm border border-gray-200 rounded"
-                            rows="2"
-                            placeholder="Output 3.1"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium">Output 3.2:</label>
-                          <textarea
-                            {...register('output3_2')}
-                            className="w-full p-1 text-sm border border-gray-200 rounded"
-                            rows="2"
-                            placeholder="Output 3.2"
-                          />
-                        </div>
-                      </div>
-                    </td>
-                    <td className="border border-gray-300 px-3 py-2">
-                      <textarea
-                        {...register('indicators3')}
-                        className="w-full p-1 text-sm border border-gray-200 rounded"
-                        rows="8"
-                        placeholder="SMART indicators for Objective 3"
+                        {...register('outcome1Verification')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
                       />
                     </td>
                     <td className="border border-gray-300 px-3 py-2">
                       <textarea
-                        {...register('verification3')}
-                        className="w-full p-1 text-sm border border-gray-200 rounded"
-                        rows="8"
-                        placeholder="Means of verification for Objective 3"
-                      />
-                    </td>
-                    <td className="border border-gray-300 px-3 py-2">
-                      <textarea
-                        {...register('assumptions3')}
-                        className="w-full p-1 text-sm border border-gray-200 rounded"
-                        rows="8"
-                        placeholder="Assumptions for Objective 3"
+                        {...register('outcome1ResponsibleParty')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
                       />
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <p className="text-sm text-gray-600 mt-2">
-              Note: The table can be adapted to correspond to the number of objectives and outputs based on the project design.
+          </div>
+
+          {/* OUTPUTS TABLE */}
+          <div className="bg-white p-4 rounded-lg border border-green-100">
+            <h5 className="text-lg font-semibold text-gray-900 mb-3 bg-teal-100 p-2 rounded">OUTPUTS</h5>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse border border-gray-300 text-sm">
+                <thead>
+                  <tr className="bg-teal-600 text-white">
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Interventions</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Statement</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Indicators</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Baselines</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Targets</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Means of Verification</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Responsible Party (Lead Agency)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* OUTPUT 1 */}
+                  <tr>
+                    <td className="border border-gray-300 px-3 py-2 font-semibold bg-teal-100">OUTPUT 1</td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output1Statement')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output1Indicators')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output1Baseline')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output1Targets')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output1Verification')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output1ResponsibleParty')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                  </tr>
+
+                  {/* OUTPUT 2 */}
+                  <tr>
+                    <td className="border border-gray-300 px-3 py-2 font-semibold bg-teal-100">OUTPUT 2</td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output2Statement')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <div className="space-y-2">
+                        <div>
+                          <label className="text-xs font-medium text-gray-600">1.1 [Indicator text]</label>
+                          <textarea
+                            {...register('output2Indicator1')}
+                            className="w-full p-1 text-xs border border-gray-200 rounded resize-none"
+                            rows="2"
+                            placeholder=""
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-gray-600">1.2 [Optional]</label>
+                          <textarea
+                            {...register('output2Indicator2')}
+                            className="w-full p-1 text-xs border border-gray-200 rounded resize-none"
+                            rows="2"
+                            placeholder=""
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-gray-600">1.3 [Optional]</label>
+                          <textarea
+                            {...register('output2Indicator3')}
+                            className="w-full p-1 text-xs border border-gray-200 rounded resize-none"
+                            rows="2"
+                            placeholder=""
+                          />
+                        </div>
+                      </div>
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output2Baseline')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output2Targets')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output2Verification')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output2ResponsibleParty')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                  </tr>
+
+                  {/* OUTPUT 3 */}
+                  <tr>
+                    <td className="border border-gray-300 px-3 py-2 font-semibold bg-teal-100">OUTPUT 3<br/>[optional]</td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output3Statement')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output3Indicators')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output3Baseline')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output3Targets')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output3Verification')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output3ResponsibleParty')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                  </tr>
+
+                  {/* OUTPUT 4 */}
+                  <tr>
+                    <td className="border border-gray-300 px-3 py-2 font-semibold bg-teal-100">OUTPUT 4<br/>[optional]</td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output4Statement')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output4Indicators')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output4Baseline')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output4Targets')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output4Verification')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output4ResponsibleParty')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                  </tr>
+
+                  {/* OUTPUT 5 */}
+                  <tr>
+                    <td className="border border-gray-300 px-3 py-2 font-semibold bg-teal-100">OUTPUT 5<br/>[optional]</td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output5Statement')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output5Indicators')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output5Baseline')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output5Targets')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output5Verification')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('output5ResponsibleParty')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* ASSUMPTIONS TABLE */}
+          <div className="bg-white p-4 rounded-lg border border-green-100">
+            <h5 className="text-lg font-semibold text-gray-900 mb-3 bg-teal-100 p-2 rounded">ASSUMPTIONS</h5>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse border border-gray-300 text-sm">
+                <thead>
+                  <tr className="bg-teal-600 text-white">
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Interventions</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Statement</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Indicators</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Baselines</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Targets</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Means of Verification</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold">Responsible Party (Lead Agency)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="border border-gray-300 px-3 py-2 font-semibold bg-teal-100">[optional]</td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('assumptions1Statement')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('assumptions1Indicators')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('assumptions1Baseline')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('assumptions1Targets')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('assumptions1Verification')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2">
+                      <textarea
+                        {...register('assumptions1ResponsibleParty')}
+                        className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
+                        rows="3"
+                        placeholder=""
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="text-sm text-gray-600 mt-3 italic">
+              Insert rows as needed.
             </p>
           </div>
+
+          <p className="text-sm text-gray-600 mt-4">
+            <strong>Note:</strong> Each table follows the format: Intervention | Statement | Indicators | Baselines, Benchmarks, Targets | Means of Verification | Responsible Party (Lead Agency). Each indicator should have its own individual row for better reporting and dashboard integration.
+          </p>
         </div>
       </div>
 

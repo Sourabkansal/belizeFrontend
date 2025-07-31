@@ -44,7 +44,7 @@ export const UserDataProvider = ({ children }) => {
     // Only fetch once when component mounts
     if (!hasInitialized.current) {
       hasInitialized.current = true;
-      fetchUserData();
+    fetchUserData();
     }
   }, []);
 
