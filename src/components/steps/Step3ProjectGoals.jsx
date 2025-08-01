@@ -120,7 +120,7 @@ const Step3ProjectGoals = ({ register, errors, setValue, getValues, watch, userD
                         className="w-full p-2 text-sm border border-gray-200 rounded resize-none"
                         rows="3"
                         placeholder=""
-                      />
+                    />
                     </td>
                     <td className="border border-gray-300 px-3 py-2">
                       <textarea

@@ -14,7 +14,7 @@ const Navigation = () => {
               Belize Fund Management
             </h1>
           </div>
-          
+
           <div className="flex space-x-4">
             <Link
               to="/"

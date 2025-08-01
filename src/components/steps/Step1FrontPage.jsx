@@ -209,15 +209,25 @@ const Step1FrontPage = ({ register, errors, setValue, getValues, watch, userData
           <div className="md:col-span-2">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="form-label">Email *</label>
-                <input
-                  type="email"
-                  {...register('contactEmail')}
-                  className="form-input"
-                  placeholder="primary.contact@organization.com"
-                />
-                {errors.contactEmail && (
-                  <p className="form-error">{errors.contactEmail.message}</p>
+                {userData ? (
+                  <PrefilledField
+                    label="Email *"
+                    value={userData.email}
+                    fieldName="Email from Concept Paper"
+                  />
+                ) : (
+                  <>
+                    <label className="form-label">Email *</label>
+                    <input
+                      type="email"
+                      {...register('contactEmail')}
+                      className="form-input"
+                      placeholder="primary.contact@organization.com"
+                    />
+                    {errors.contactEmail && (
+                      <p className="form-error">{errors.contactEmail.message}</p>
+                    )}
+                  </>
                 )}
               </div>
               <div>

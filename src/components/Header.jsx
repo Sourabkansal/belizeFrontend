@@ -123,9 +123,9 @@ const Header = () => {
             <Link 
               to="/professional-form" 
               className={`flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
-                isActive('/professional-form') || isActive('/form')
+                isActive('/professional-form') || isActive('/form')      
                   ? 'bg-blue-50 text-blue-700 border border-blue-200/50' 
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-blue-600'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-blue-600' 
               }`}
             >
               <FileText className="h-5 w-5" />
